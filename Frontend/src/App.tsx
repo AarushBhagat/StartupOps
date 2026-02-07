@@ -176,8 +176,8 @@ export default function App() {
         }
       `}</style>
       
-      {/* Navigation - Show on all pages except auth flow */}
-      {!['login', 'signup', 'payment', 'onboarding'].includes(currentPage) && (
+      {/* Navigation - Show on all pages except auth flow and dashboards */}
+      {!['login', 'signup', 'payment', 'onboarding', 'dashboard', 'team-dashboard', 'tasks', 'feedback', 'analytics', 'investor-hub', 'profile', 'settings'].includes(currentPage) && (
         <Navigation 
           onNavigate={scrollToSection}
           onGetStarted={() => setCurrentPage('plans')}

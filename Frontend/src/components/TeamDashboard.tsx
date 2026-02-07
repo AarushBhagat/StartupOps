@@ -70,11 +70,70 @@ export const TeamDashboard = ({
   };
 
   return (
-    <div 
+    <motion.div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className="min-h-screen bg-[#02040a] text-white relative overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
+      {/* Dashboard Navbar - Matching Landing Page Style */}
+      <motion.nav 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="fixed top-0 left-0 right-0 z-50 py-4 bg-gradient-to-b from-[#02040a]/80 via-[#02040a]/60 to-transparent backdrop-blur-2xl"
+        style={{ boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)' }}
+      >
+        <div className="container mx-auto px-6 flex items-center justify-between">
+          {/* Logo */}
+          <button 
+            onClick={() => onNavigate?.('team-dashboard')}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center font-bold text-white">
+              S
+            </div>
+            <span className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
+              StartupOps
+            </span>
+          </button>
+
+          {/* Centered Navigation Pill */}
+          <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bg-white/5 backdrop-blur-md rounded-full px-3 py-2 border border-white/10 shadow-lg">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onNavigate?.('team-dashboard')}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 hover:backdrop-blur-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => onNavigate?.('tasks')}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 hover:backdrop-blur-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
+              >
+                My Tasks
+              </button>
+              <button
+                onClick={() => onNavigate?.('feedback')}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 hover:backdrop-blur-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
+              >
+                Feedback
+              </button>
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={onLogout}
+            className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] active:scale-95"
+          >
+            Logout
+          </button>
+        </div>
+      </motion.nav>
+      
       {/* Animated Background with Parallax */}
       <AnimatedBackground mouseX={mouseX} mouseY={mouseY} variant="dashboard" />
       
@@ -82,11 +141,12 @@ export const TeamDashboard = ({
       <FloatingShapes mouseX={mouseX} mouseY={mouseY} count={5} />
 
       {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 md:px-6 pt-32 md:pt-36 pb-12 md:pb-20">
+      <main className="relative z-10 container mx-auto px-4 md:px-6 pt-28 md:pt-32 pb-12 md:pb-20">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="mb-8 md:mb-12"
         >
           <SplitText
@@ -285,6 +345,6 @@ export const TeamDashboard = ({
           </motion.button>
         </motion.div>
       </main>
-    </div>
+    </motion.div>
   );
 };

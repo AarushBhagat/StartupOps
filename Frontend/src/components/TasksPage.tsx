@@ -8,6 +8,7 @@ import {
   User, 
   Flag, 
   CheckCircle2,
+  CheckCircle,
   Clock,
   AlertCircle,
   Sparkles,
@@ -101,10 +102,10 @@ export const TasksPage = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'done': return <CheckCircle2 className="w-4 h-4 text-green-400" />;
-      case 'in-progress': return <Clock className="w-4 h-4 text-cyan-400" />;
-      case 'review': return <AlertCircle className="w-4 h-4 text-yellow-400" />;
-      default: return <Clock className="w-4 h-4 text-gray-400" />;
+      case 'done': return <CheckCircle className="w-5 h-5 text-green-400" />;
+      case 'in-progress': return <Clock className="w-5 h-5 text-cyan-400" />;
+      case 'review': return <AlertCircle className="w-5 h-5 text-yellow-400" />;
+      default: return <Clock className="w-5 h-5 text-gray-400" />;
     }
   };
 
@@ -138,14 +139,14 @@ export const TasksPage = () => {
         transition={{ delay: 0.1 }}
         className="flex flex-wrap gap-4 mb-8"
       >
-        <div className="px-5 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
-          <span className="text-sm text-gray-400">12 tasks this week</span>
+        <div className="px-6 py-3.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+          <span className="text-sm text-gray-400 font-semibold tracking-wide">12 tasks this week</span>
         </div>
-        <div className="px-5 py-3 rounded-full bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-xl">
-          <span className="text-sm text-cyan-400">🎯 3 active milestones</span>
+        <div className="px-6 py-3.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-xl">
+          <span className="text-sm text-cyan-400 font-semibold tracking-wide">🎯 3 active milestones</span>
         </div>
-        <div className="px-5 py-3 rounded-full bg-green-500/10 border border-green-500/20 backdrop-blur-xl">
-          <span className="text-sm text-green-400">✓ 8 completed today</span>
+        <div className="px-6 py-3.5 rounded-full bg-green-500/10 border border-green-500/20 backdrop-blur-xl">
+          <span className="text-sm text-green-400 font-semibold tracking-wide">✓ 8 completed today</span>
         </div>
       </motion.div>
 
@@ -156,30 +157,30 @@ export const TasksPage = () => {
         transition={{ delay: 0.2 }}
         className="flex flex-wrap gap-4 mb-8"
       >
-        <div className="flex-1 min-w-[250px] relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className="flex-1 min-w-[300px] relative">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search tasks..."
-            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors"
+            className="w-full pl-13 pr-5 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white text-base placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors text-center tracking-wide"
           />
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setShowFilterModal(true)}
-          className="px-6 py-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+          className="px-6 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white hover:bg-white/10 transition-colors flex items-center gap-3"
         >
           <Filter className="w-5 h-5" />
-          <span>Filter</span>
+          <span className="font-medium">Filter</span>
         </motion.button>
         <motion.button
           whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(6, 182, 212, 0.3)" }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setShowAIGenerator(!showAIGenerator)}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all flex items-center gap-2"
+          className="px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all flex items-center gap-3"
         >
           <Sparkles className="w-5 h-5" />
           <span>AI Generate</span>
@@ -188,10 +189,10 @@ export const TasksPage = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setShowAddTaskModal(true)}
-          className="px-6 py-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors flex items-center gap-2"
+          className="px-6 py-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors flex items-center gap-3"
         >
           <Plus className="w-5 h-5" />
-          <span>Add Task</span>
+          <span className="font-medium">Add Task</span>
         </motion.button>
       </motion.div>
 
@@ -246,19 +247,19 @@ export const TasksPage = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-4"
+          className="space-y-5"
         >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Target className="w-5 h-5 text-cyan-400" />
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-xl font-bold flex items-center gap-3">
+              <Target className="w-6 h-6 text-cyan-400" />
               <span>Milestones</span>
             </h2>
             <motion.button
               whileHover={{ scale: 1.1, rotate: 90 }}
               whileTap={{ scale: 0.9 }}
-              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+              className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5" />
             </motion.button>
           </div>
 
@@ -271,28 +272,28 @@ export const TasksPage = () => {
               viewport={{ once: false, amount: 0.3 }}
               transition={{ delay: 0.4 + index * 0.1 }}
               whileHover={{ scale: 1.02, y: -2 }}
-              className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
+              className="p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
             >
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-white group-hover:text-cyan-400 transition-colors">
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="font-semibold text-white group-hover:text-cyan-400 transition-colors text-[15px] leading-snug">
                   {milestone.title}
                 </h3>
                 {milestone.delayed && (
-                  <span className="px-2 py-1 rounded text-xs bg-red-500/20 text-red-400">
+                  <span className="px-2.5 py-1.5 rounded text-xs bg-red-500/20 text-red-400">
                     Delayed
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
+              <div className="flex items-center gap-2.5 text-sm text-gray-400 mb-4">
                 <Calendar className="w-4 h-4" />
-                <span>Due: {milestone.due}</span>
+                <span className="text-[13px]">Due: {milestone.due}</span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Progress</span>
                   <span className="text-white font-medium">{milestone.progress}%</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-white/10 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${milestone.progress}%` }}
@@ -300,7 +301,7 @@ export const TasksPage = () => {
                     className={`h-full rounded-full ${milestone.delayed ? 'bg-gradient-to-r from-red-500 to-orange-500' : 'bg-gradient-to-r from-cyan-500 to-purple-600'}`}
                   />
                 </div>
-                <div className="flex justify-between text-xs text-gray-400">
+                <div className="flex justify-between text-xs text-gray-400 pt-1">
                   <span>{milestone.completed}/{milestone.tasks} tasks</span>
                   {milestone.delayed && (
                     <motion.button
@@ -319,35 +320,35 @@ export const TasksPage = () => {
 
         {/* Kanban Board */}
         <div className="overflow-x-auto pb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 min-w-[800px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 min-w-[1200px]">
             {columns.map((column, columnIndex) => (
               <motion.div
                 key={column.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + columnIndex * 0.1 }}
-                className="flex flex-col"
+                className="flex flex-col min-w-[280px]"
               >
                 {/* Column Header */}
-                <div className="flex items-center justify-between p-4 mb-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between px-6 py-5 mb-4 rounded-xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg">
+                  <div className="flex items-center gap-3">
                     {getStatusIcon(column.id)}
-                    <h3 className="font-semibold text-white">{column.title}</h3>
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-xs text-gray-400">
+                    <h3 className="font-bold text-white text-base tracking-wide">{column.title}</h3>
+                    <span className="px-3 py-1.5 rounded-full bg-white/15 text-sm font-semibold text-gray-300 min-w-[32px] text-center">
                       {column.count}
                     </span>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
-                    className="p-1 rounded hover:bg-white/10 transition-colors"
+                    className="p-2 rounded-lg hover:bg-white/15 transition-colors"
                   >
-                    <Plus className="w-4 h-4 text-gray-400" />
+                    <Plus className="w-5 h-5 text-gray-300 hover:text-white transition-colors" />
                   </motion.button>
                 </div>
 
                 {/* Task Cards */}
-                <div className="space-y-3 flex-1">
+                <div className="space-y-4 flex-1">
                   {getTasksByStatus(column.id).map((task, taskIndex) => (
                     <motion.div
                       key={task.id}
@@ -359,39 +360,39 @@ export const TasksPage = () => {
                       whileHover={{ scale: 1.02, y: -4, boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)" }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setSelectedTask(task)}
-                      className="p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
+                      className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <h4 className="font-medium text-white group-hover:text-cyan-400 transition-colors flex-1 leading-relaxed">
+                      <div className="flex items-start justify-between mb-5">
+                        <h4 className="font-medium text-white group-hover:text-cyan-400 transition-colors flex-1 leading-relaxed text-[15px]">
                           {task.title}
                         </h4>
-                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded hover:bg-white/10">
-                          <MoreVertical className="w-4 h-4 text-gray-400" />
+                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded hover:bg-white/10">
+                          <MoreVertical className="w-5 h-5 text-gray-400" />
                         </button>
                       </div>
                       
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <span className={`px-2.5 py-1.5 rounded text-xs font-medium uppercase ${getPriorityColor(task.priority)}`}>
+                      <div className="flex flex-wrap gap-3 mb-5">
+                        <span className={`px-3 py-2 rounded text-xs font-medium uppercase ${getPriorityColor(task.priority)}`}>
                           {task.priority}
                         </span>
                         {task.milestone && (
-                          <span className="px-2.5 py-1.5 rounded text-xs bg-purple-500/20 text-purple-400">
+                          <span className="px-3 py-2 rounded text-xs bg-purple-500/20 text-purple-400">
                             {task.milestone}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between text-sm pt-2 border-t border-white/5">
+                      <div className="flex items-center justify-between text-sm pt-4 border-t border-white/5">
                         {task.assignee && (
-                          <div className="flex items-center gap-2 text-gray-400">
-                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
+                          <div className="flex items-center gap-3 text-gray-400">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-sm font-bold text-white">
                               {task.assignee.charAt(0)}
                             </div>
-                            <span>{task.assignee}</span>
+                            <span className="text-[13px]">{task.assignee}</span>
                           </div>
                         )}
                         {task.due && (
-                          <div className="flex items-center gap-1 text-gray-400">
+                          <div className="flex items-center gap-2 text-gray-400">
                             <Clock className="w-4 h-4" />
                             <span className="text-xs">{task.due}</span>
                           </div>
