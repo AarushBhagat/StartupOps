@@ -43,6 +43,9 @@ export const TasksPage = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [filter, setFilter] = useState('all');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const milestones: Milestone[] = [
     {
@@ -118,12 +121,12 @@ export const TasksPage = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-10"
       >
-        <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500">
+        <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500">
           Tasks & Milestones
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-400 text-lg">
           Manage your startup's execution with AI-powered task management
         </p>
       </motion.div>
@@ -133,15 +136,15 @@ export const TasksPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-wrap gap-4 mb-6"
+        className="flex flex-wrap gap-4 mb-8"
       >
-        <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+        <div className="px-5 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
           <span className="text-sm text-gray-400">12 tasks this week</span>
         </div>
-        <div className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-xl">
+        <div className="px-5 py-3 rounded-full bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-xl">
           <span className="text-sm text-cyan-400">🎯 3 active milestones</span>
         </div>
-        <div className="px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 backdrop-blur-xl">
+        <div className="px-5 py-3 rounded-full bg-green-500/10 border border-green-500/20 backdrop-blur-xl">
           <span className="text-sm text-green-400">✓ 8 completed today</span>
         </div>
       </motion.div>
@@ -154,17 +157,20 @@ export const TasksPage = () => {
         className="flex flex-wrap gap-4 mb-8"
       >
         <div className="flex-1 min-w-[250px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search tasks..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors"
+            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors"
           />
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+          onClick={() => setShowFilterModal(true)}
+          className="px-6 py-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl text-white hover:bg-white/10 transition-colors flex items-center gap-2"
         >
           <Filter className="w-5 h-5" />
           <span>Filter</span>
@@ -181,7 +187,8 @@ export const TasksPage = () => {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="px-6 py-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors flex items-center gap-2"
+          onClick={() => setShowAddTaskModal(true)}
+          className="px-6 py-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           <span>Add Task</span>
@@ -260,6 +267,8 @@ export const TasksPage = () => {
               key={milestone.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
               transition={{ delay: 0.4 + index * 0.1 }}
               whileHover={{ scale: 1.02, y: -2 }}
               className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
@@ -344,33 +353,35 @@ export const TasksPage = () => {
                       key={task.id}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: false, amount: 0.2 }}
                       transition={{ delay: 0.6 + columnIndex * 0.1 + taskIndex * 0.05 }}
-                      whileHover={{ scale: 1.02, y: -2, boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)" }}
+                      whileHover={{ scale: 1.02, y: -4, boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)" }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setSelectedTask(task)}
-                      className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
+                      className="p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all cursor-pointer group"
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <h4 className="font-medium text-white group-hover:text-cyan-400 transition-colors flex-1">
+                      <div className="flex items-start justify-between mb-4">
+                        <h4 className="font-medium text-white group-hover:text-cyan-400 transition-colors flex-1 leading-relaxed">
                           {task.title}
                         </h4>
-                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-white/10">
+                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded hover:bg-white/10">
                           <MoreVertical className="w-4 h-4 text-gray-400" />
                         </button>
                       </div>
                       
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        <span className={`px-2 py-1 rounded text-xs font-medium uppercase ${getPriorityColor(task.priority)}`}>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <span className={`px-2.5 py-1.5 rounded text-xs font-medium uppercase ${getPriorityColor(task.priority)}`}>
                           {task.priority}
                         </span>
                         {task.milestone && (
-                          <span className="px-2 py-1 rounded text-xs bg-purple-500/20 text-purple-400">
+                          <span className="px-2.5 py-1.5 rounded text-xs bg-purple-500/20 text-purple-400">
                             {task.milestone}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center justify-between text-sm pt-2 border-t border-white/5">
                         {task.assignee && (
                           <div className="flex items-center gap-2 text-gray-400">
                             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
@@ -471,6 +482,200 @@ export const TasksPage = () => {
                     className="px-6 py-3 rounded-xl bg-red-500/10 text-red-400 font-medium hover:bg-red-500/20 transition-colors"
                   >
                     Delete Task
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Filter Modal */}
+      <AnimatePresence>
+        {showFilterModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowFilterModal(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md p-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl space-y-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Filter Tasks</h2>
+                <button
+                  onClick={() => setShowFilterModal(false)}
+                  className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-3">Status</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['All', 'Todo', 'In Progress', 'Review', 'Done'].map((status) => (
+                    <motion.button
+                      key={status}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setFilter(status.toLowerCase().replace(' ', '-'))}
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                        filter === status.toLowerCase().replace(' ', '-')
+                          ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white'
+                          : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      {status}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-3">Priority</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {['Low', 'Medium', 'High'].map((priority) => (
+                    <motion.button
+                      key={priority}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white text-sm font-medium transition-all"
+                    >
+                      {priority}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setFilter('all');
+                    setShowFilterModal(false);
+                  }}
+                  className="flex-1 px-6 py-3 rounded-xl bg-white/5 text-gray-400 hover:text-white transition-colors"
+                >
+                  Reset
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowFilterModal(false)}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+                >
+                  Apply Filter
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add Task Modal */}
+      <AnimatePresence>
+        {showAddTaskModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowAddTaskModal(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-2xl p-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Create New Task</h2>
+                <button
+                  onClick={() => setShowAddTaskModal(false)}
+                  className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Task Title</label>
+                  <input
+                    type="text"
+                    placeholder="Enter task title..."
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
+                  <textarea
+                    placeholder="Add task description..."
+                    className="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors resize-none"
+                    rows={4}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
+                    <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors">
+                      <option value="todo">To Do</option>
+                      <option value="in-progress">In Progress</option>
+                      <option value="review">In Review</option>
+                      <option value="done">Done</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Priority</label>
+                    <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors">
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Assignee</label>
+                    <input
+                      type="text"
+                      placeholder="Assign to..."
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Due Date</label>
+                    <input
+                      type="date"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowAddTaskModal(false)}
+                    className="flex-1 px-6 py-3 rounded-xl bg-white/5 text-gray-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+                  >
+                    Create Task
                   </motion.button>
                 </div>
               </div>

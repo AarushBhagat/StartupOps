@@ -70,12 +70,12 @@ export const InvestorHubPage = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-10"
       >
-        <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500">
+        <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500">
           Investor Hub
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-400 text-lg">
           Track investor readiness and manage fundraising materials
         </p>
       </motion.div>
@@ -87,18 +87,18 @@ export const InvestorHubPage = () => {
         transition={{ delay: 0.1 }}
         className="p-8 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 backdrop-blur-xl mb-8"
       >
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-8">
           <div className="p-3 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
             <Target className="w-6 h-6 text-cyan-400" />
           </div>
           <h2 className="text-2xl font-bold text-white">Your Pitch Score</h2>
         </div>
 
-        <div className="grid lg:grid-cols-[200px_1fr] gap-8">
+        <div className="grid lg:grid-cols-[240px_1fr] gap-8 lg:gap-12">
           {/* Score Circle */}
-          <div className="flex items-center justify-center">
-            <div className="relative">
-              <svg className="w-48 h-48 transform -rotate-90">
+          <div className="flex items-center justify-center lg:justify-start">
+            <div className="relative w-48 h-48 flex-shrink-0">
+              <svg className="w-full h-full transform -rotate-90">
                 <circle
                   cx="96"
                   cy="96"
@@ -135,13 +135,13 @@ export const InvestorHubPage = () => {
           </div>
 
           {/* Checklist */}
-          <div>
-            <div className={`inline-block px-4 py-2 rounded-full bg-gradient-to-r ${getScoreColor(pitchScore)} bg-opacity-20 text-white font-medium mb-6`}>
+          <div className="w-full min-w-0">
+            <div className={`inline-block px-5 py-2.5 rounded-full bg-gradient-to-r ${getScoreColor(pitchScore)} bg-opacity-20 text-white font-medium mb-6`}>
               {getScoreText(pitchScore)}
             </div>
             
-            <h3 className="text-lg font-bold text-white mb-4">Complete these to reach 85+:</h3>
-            <div className="grid gap-3">
+            <h3 className="text-lg font-bold text-white mb-5">Complete these to reach 85+:</h3>
+            <div className="space-y-3">
               {scoreItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
@@ -150,7 +150,7 @@ export const InvestorHubPage = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + index * 0.05 }}
-                    className={`flex items-center gap-3 p-3 rounded-lg ${
+                    className={`flex items-center gap-4 p-4 rounded-lg ${
                       item.status === 'complete'
                         ? 'bg-green-500/10'
                         : item.status === 'warning'
@@ -158,7 +158,7 @@ export const InvestorHubPage = () => {
                         : 'bg-red-500/10'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 ${
+                    <Icon className={`w-5 h-5 flex-shrink-0 ${
                       item.status === 'complete'
                         ? 'text-green-400'
                         : item.status === 'warning'
@@ -174,7 +174,7 @@ export const InvestorHubPage = () => {
             <motion.button
               whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(6, 182, 212, 0.3)" }}
               whileTap={{ scale: 0.98 }}
-              className="mt-6 w-full px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+              className="mt-6 w-full px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
             >
               Auto-fill Missing Data
             </motion.button>
@@ -182,123 +182,125 @@ export const InvestorHubPage = () => {
         </div>
       </motion.div>
 
-      <div className="grid lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid lg:grid-cols-2 gap-8 mb-8">
         {/* Traction Metrics */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: 0.2 }}
-          className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl"
+          className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-400" />
+              <TrendingUp className="w-6 h-6 text-green-400" />
               Traction Metrics
             </h3>
             {!metricsEdit && (
               <button
                 onClick={() => setMetricsEdit(true)}
-                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors font-medium"
               >
                 Edit
               </button>
             )}
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Monthly Recurring Revenue (MRR)</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2.5">Monthly Recurring Revenue (MRR)</label>
               {metricsEdit ? (
                 <input
                   type="text"
                   value={metrics.mrr}
                   onChange={(e) => setMetrics({ ...metrics, mrr: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                 />
               ) : (
-                <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white">
+                <div className="px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-medium">
                   ${metrics.mrr}
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Total Active Users</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2.5">Total Active Users</label>
               {metricsEdit ? (
                 <input
                   type="text"
                   value={metrics.users}
                   onChange={(e) => setMetrics({ ...metrics, users: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                 />
               ) : (
-                <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white">
+                <div className="px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-medium">
                   {metrics.users}
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Month-over-Month Growth (%)</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2.5">Month-over-Month Growth (%)</label>
               {metricsEdit ? (
                 <input
                   type="text"
                   value={metrics.growth}
                   onChange={(e) => setMetrics({ ...metrics, growth: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                 />
               ) : (
-                <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white">
+                <div className="px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-medium">
                   {metrics.growth}%
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Monthly Burn Rate</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2.5">Monthly Burn Rate</label>
               {metricsEdit ? (
                 <input
                   type="text"
                   value={metrics.burn}
                   onChange={(e) => setMetrics({ ...metrics, burn: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                 />
               ) : (
-                <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white">
+                <div className="px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-medium">
                   ${metrics.burn}
                 </div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Runway (Months)</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2.5">Runway (Months)</label>
               {metricsEdit ? (
                 <input
                   type="text"
                   value={metrics.runway}
                   onChange={(e) => setMetrics({ ...metrics, runway: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                 />
               ) : (
-                <div className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white">
+                <div className="px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-medium">
                   {metrics.runway} months
                 </div>
               )}
             </div>
 
             {metricsEdit && (
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 pt-4">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setMetricsEdit(false)}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
                 >
                   Save Metrics
                 </motion.button>
                 <button
                   onClick={() => setMetricsEdit(false)}
-                  className="px-4 py-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition-colors"
+                  className="px-6 py-3 rounded-xl bg-white/5 text-gray-400 hover:text-white transition-colors"
                 >
                   Cancel
                 </button>
@@ -311,17 +313,19 @@ export const InvestorHubPage = () => {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: 0.3 }}
-          className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl"
+          className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <Eye className="w-5 h-5 text-purple-400" />
+              <Eye className="w-6 h-6 text-purple-400" />
               Investor Dashboard Preview
             </h3>
           </div>
 
-          <div className="space-y-4 mb-6">
+          <div className="space-y-6 mb-8">
             <div>
               <div className="text-2xl font-bold text-white mb-1">PetHealth AI</div>
               <div className="text-gray-400">AI-powered vet consultations</div>
@@ -381,47 +385,49 @@ export const InvestorHubPage = () => {
 
       {/* Due Diligence Checklist */}
       <motion.div
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.2 }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl mb-8"
+        className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl mb-8"
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <FileCheck className="w-5 h-5 text-orange-400" />
+            <FileCheck className="w-6 h-6 text-orange-400" />
             Due Diligence Checklist
           </h3>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-gray-400 font-medium">
             {dueDiligenceDocs.filter(d => d.status === 'complete').length}/{dueDiligenceDocs.length} complete
           </span>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4 mb-8">
           {dueDiligenceDocs.map((doc, index) => (
             <motion.div
               key={doc.label}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 + index * 0.05 }}
-              className={`flex items-center justify-between p-4 rounded-lg ${
+              className={`flex items-center justify-between p-4 rounded-xl ${
                 doc.status === 'complete'
                   ? 'bg-green-500/10 border border-green-500/20'
                   : 'bg-white/5 border border-white/10'
               }`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 {doc.status === 'complete' ? (
-                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
                 ) : (
-                  <XCircle className="w-5 h-5 text-gray-400" />
+                  <XCircle className="w-6 h-6 text-gray-400 flex-shrink-0" />
                 )}
-                <span className={doc.status === 'complete' ? 'text-white' : 'text-gray-400'}>
+                <span className={`${doc.status === 'complete' ? 'text-white font-medium' : 'text-gray-400'}`}>
                   {doc.label}
                 </span>
               </div>
               {doc.status === 'missing' && (
-                <button className="p-1.5 rounded hover:bg-white/10 transition-colors">
-                  <Upload className="w-4 h-4 text-gray-400" />
+                <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
+                  <Upload className="w-5 h-5 text-gray-400" />
                 </button>
               )}
             </motion.div>
@@ -450,6 +456,8 @@ export const InvestorHubPage = () => {
 
       {/* Pitch Deck Generator */}
       <motion.div
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.2 }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
