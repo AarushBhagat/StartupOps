@@ -176,13 +176,14 @@ export default function App() {
         }
       `}</style>
       
-      {/* Navigation - Only show on home and plans page */}
-      {(currentPage === 'home' || currentPage === 'plans') && (
+      {/* Navigation - Show on all pages except auth flow */}
+      {!['login', 'signup', 'payment', 'onboarding'].includes(currentPage) && (
         <Navigation 
           onNavigate={scrollToSection}
           onGetStarted={() => setCurrentPage('plans')}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          isAuthenticated={isAuthenticated}
         />
       )}
       
@@ -320,6 +321,7 @@ export default function App() {
             hasStartupInfo={hasStartupInfo}
             startupInfo={startupInfo || undefined}
             onSetupStartup={handleSetupStartup}
+            currentPage={currentPage}
           />
         </motion.div>
       )}
@@ -337,6 +339,7 @@ export default function App() {
             onLogout={handleLogout}
             onNavigate={setCurrentPage}
             userName={getUserName()}
+            currentPage={currentPage}
           />
         </motion.div>
       )}

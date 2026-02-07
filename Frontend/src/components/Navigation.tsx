@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 
 interface NavigationProps {
@@ -7,16 +7,22 @@ interface NavigationProps {
   onGetStarted: () => void;
   currentPage: string;
   setCurrentPage: (page: string) => void;
+  isAuthenticated?: boolean;
 }
 
-export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPage }: NavigationProps) => {
+export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPage, isAuthenticated = false }: NavigationProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { scrollY } = useScroll();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
-  });
+  // Handle scroll with useEffect instead of useMotionValueEvent to avoid constructor issues
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleNavClick = (sectionId: string) => {
     if (currentPage !== 'home') {
@@ -35,7 +41,7 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-4 bg-[#02040a]/90 backdrop-blur-xl border-b border-white/5' : 'py-8 bg-transparent'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || currentPage !== 'home' ? 'py-4 bg-[#02040a]/90 backdrop-blur-xl border-b border-white/5' : 'py-8 bg-transparent'}`}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
           <button 
@@ -65,18 +71,29 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentPage('login')}
-              className="px-6 py-2.5 text-white text-sm font-medium hover:text-cyan-400 transition-colors"
-            >
-              Sign In
-            </button>
-            <button 
-              onClick={onGetStarted}
-              className="px-6 py-2.5 rounded-full border border-white/10 text-white text-sm font-medium hover:bg-white/5 transition-colors"
-            >
-              Get Started
-            </button>
+            {isAuthenticated ? (
+              <button 
+                onClick={() => setCurrentPage('dashboard')}
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-sm font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <>
+                <button 
+                  onClick={() => setCurrentPage('login')}
+                  className="px-6 py-2.5 text-white text-sm font-medium hover:text-cyan-400 transition-colors"
+                >
+                  Sign In
+                </button>
+                <button 
+                  onClick={onGetStarted}
+                  className="px-6 py-2.5 rounded-full border border-white/10 text-white text-sm font-medium hover:bg-white/5 transition-colors"
+                >
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
 
           <button className="md:hidden text-white" onClick={() => setIsMobileMenuOpen(true)}>
@@ -108,12 +125,29 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
               <button onClick={() => handleNavClick('about')} className="text-left">About</button>
             </div>
             <div className="mt-auto flex flex-col gap-4">
-              <button 
-                onClick={() => { setIsMobileMenuOpen(false); onGetStarted(); }}
-                className="w-full py-4 rounded-full border border-white/20 text-white font-bold"
-              >
-                Get Started
-              </button>
+              {isAuthenticated ? (
+                <button 
+                  onClick={() => { setIsMobileMenuOpen(false); setCurrentPage('dashboard'); }}
+                  className="w-full py-4 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold"
+                >
+                  Go to Dashboard
+                </button>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => { setIsMobileMenuOpen(false); setCurrentPage('login'); }}
+                    className="w-full py-4 rounded-full border border-white/20 text-white font-bold"
+                  >
+                    Sign In
+                  </button>
+                  <button 
+                    onClick={() => { setIsMobileMenuOpen(false); onGetStarted(); }}
+                    className="w-full py-4 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold"
+                  >
+                    Get Started
+                  </button>
+                </>
+              )}
             </div>
           </motion.div>
         )}

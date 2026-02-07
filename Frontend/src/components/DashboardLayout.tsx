@@ -55,7 +55,7 @@ export const DashboardLayout = ({
     { id: 'tasks', label: 'Tasks', icon: ListTodo },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'investor', label: 'Investor Hub', icon: Briefcase },
+    { id: 'investor-hub', label: 'Investor Hub', icon: Briefcase },
     { id: 'profile', label: 'Profile', icon: Building2 },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
@@ -79,7 +79,7 @@ export const DashboardLayout = ({
       <AnimatedBackground mouseX={mouseX} mouseY={mouseY} />
       <FloatingShapes mouseX={mouseX} mouseY={mouseY} count={4} />
 
-      <div className="relative z-10 flex">
+      <div className="relative z-10 flex pt-20 md:pt-24">{/* Added padding for landing page nav */}
         {/* Desktop Sidebar */}
         <motion.aside 
           initial={{ x: -300, opacity: 0 }}

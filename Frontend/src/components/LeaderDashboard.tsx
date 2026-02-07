@@ -1,22 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'motion/react';
 import { 
-  LayoutGrid, 
-  ListTodo, 
-  Users2, 
-  FileBarChart, 
-  TrendingUp, 
-  Sparkles,
   CheckCircle2,
   Clock,
   AlertCircle,
-  LogOut,
-  Presentation,
   Rocket,
   Target,
   Plus,
   UserPlus,
-  Calendar
+  Sparkles,
+  ListTodo,
+  Users2,
+  TrendingUp,
+  Presentation
 } from 'lucide-react';
 import { SplitText } from './SplitText';
 import { AnimatedBackground } from './AnimatedBackground';
@@ -35,6 +31,7 @@ interface LeaderDashboardProps {
     stage: string;
   };
   onSetupStartup?: () => void;
+  currentPage?: string;
 }
 
 export const LeaderDashboard = ({ 
@@ -43,7 +40,8 @@ export const LeaderDashboard = ({
   userName = "Team Leader",
   hasStartupInfo,
   startupInfo,
-  onSetupStartup
+  onSetupStartup,
+  currentPage = 'dashboard'
 }: LeaderDashboardProps) => {
   const [currentSection, setCurrentSection] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -106,74 +104,8 @@ export const LeaderDashboard = ({
       {/* Floating Geometric Shapes */}
       <FloatingShapes mouseX={mouseX} mouseY={mouseY} count={5} />
 
-      {/* Floating Navigation */}
-      <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 py-4 md:py-6 bg-transparent"
-      >
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between">
-            <button 
-              onClick={() => onNavigate?.('home')}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center font-bold text-white text-sm">
-                S
-              </div>
-              <span className="text-lg md:text-xl font-bold text-white tracking-tight hidden sm:block" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
-                StartupOps
-              </span>
-            </button>
-
-            {/* Centered Pill Navigation - Hidden on mobile */}
-            <div className="hidden lg:flex items-center justify-center bg-white/5 backdrop-blur-md rounded-full px-6 py-2.5 border border-white/10">
-              <div className="flex items-center gap-6">
-                <button onClick={() => setCurrentSection('dashboard')} className={`text-sm font-medium flex items-center gap-2 ${currentSection === 'dashboard' ? 'text-white' : 'text-gray-400 hover:text-white'} transition-colors`}>
-                  <LayoutGrid className="w-4 h-4" />
-                  Dashboard
-                </button>
-                <button onClick={() => setCurrentSection('tasks')} className={`text-sm font-medium flex items-center gap-2 ${currentSection === 'tasks' ? 'text-white' : 'text-gray-400 hover:text-white'} transition-colors`}>
-                  <ListTodo className="w-4 h-4" />
-                  Tasks
-                </button>
-                <button onClick={() => setCurrentSection('team')} className={`text-sm font-medium flex items-center gap-2 ${currentSection === 'team' ? 'text-white' : 'text-gray-400 hover:text-white'} transition-colors`}>
-                  <Users2 className="w-4 h-4" />
-                  Team
-                </button>
-                <button onClick={() => setCurrentSection('pitch')} className={`text-sm font-medium flex items-center gap-2 ${currentSection === 'pitch' ? 'text-white' : 'text-gray-400 hover:text-white'} transition-colors`}>
-                  <Presentation className="w-4 h-4" />
-                  Pitch Deck
-                </button>
-                <button onClick={() => setCurrentSection('analytics')} className={`text-sm font-medium flex items-center gap-2 ${currentSection === 'analytics' ? 'text-white' : 'text-gray-400 hover:text-white'} transition-colors`}>
-                  <FileBarChart className="w-4 h-4" />
-                  Analytics
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 md:gap-4">
-              {/* User Profile Button */}
-              <div className="flex items-center gap-2 md:gap-3 bg-white/5 backdrop-blur-md rounded-full px-3 md:px-4 py-2 border border-white/10">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center font-bold text-xs md:text-sm">
-                  {userName.charAt(0)}
-                </div>
-                <span className="text-xs md:text-sm font-medium hidden sm:block">{userName}</span>
-              </div>
-              <button 
-                onClick={onLogout}
-                className="p-2 md:p-2.5 rounded-full border border-white/10 text-gray-400 hover:text-red-400 hover:border-red-400/30 transition-colors"
-                title="Logout"
-              >
-                <LogOut className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
       {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-12 md:pb-20">
+      <main className="relative z-10 container mx-auto px-4 md:px-6 pt-32 md:pt-36 pb-12 md:pb-20">
         <AnimatePresence mode="wait">
           {!hasStartupInfo ? (
             // Empty State
