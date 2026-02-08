@@ -36,7 +36,7 @@ interface Response {
 }
 
 export const FeedbackPage = () => {
-  const [activeTab, setActiveTab] = useState<'collect' | 'responses'>('collect');
+  const [activeTab, setActiveTab] = useState<'collect' | 'responses' | 'review'>('collect');
   const [selectedRequest, setSelectedRequest] = useState<FeedbackRequest | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newFeedback, setNewFeedback] = useState({
@@ -44,6 +44,33 @@ export const FeedbackPage = () => {
     type: 'external',
     questions: ['']
   });
+
+  const tasksToReview = [
+    { 
+      id: '1', 
+      title: 'Testing authentication', 
+      assignee: 'Mike', 
+      priority: 'high', 
+      submittedDate: 'Feb 6',
+      description: 'Complete authentication flow testing including OAuth, email verification, and password reset'
+    },
+    { 
+      id: '2', 
+      title: 'Customer onboarding flow', 
+      assignee: 'Emma', 
+      priority: 'medium', 
+      submittedDate: 'Feb 7',
+      description: 'Review the new onboarding process with tooltips and interactive guides'
+    },
+    { 
+      id: '3', 
+      title: 'Backend API development', 
+      assignee: 'John', 
+      priority: 'high', 
+      submittedDate: 'Feb 5',
+      description: 'RESTful API endpoints for user management and data operations'
+    },
+  ];
 
   const feedbackRequests: FeedbackRequest[] = [
     { id: '1', title: 'Payment Gateway Feature', responses: 20, sentiment: 85, status: 'active', created: 'Feb 1', type: 'external' },
@@ -127,6 +154,24 @@ export const FeedbackPage = () => {
             View Responses
           </span>
           {activeTab === 'responses' && (
+            <motion.div
+              layoutId="activeTab"
+              className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-purple-600"
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('review')}
+          className="relative px-6 py-3 font-medium transition-colors"
+        >
+          <span className={`${activeTab === 'review' ? 'text-white' : 'text-gray-400'}`}>
+            Tasks to Review
+            <span className="ml-2 px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold">
+              {tasksToReview.length}
+            </span>
+          </span>
+          {activeTab === 'review' && (
             <motion.div
               layoutId="activeTab"
               className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-purple-600"
@@ -539,6 +584,82 @@ export const FeedbackPage = () => {
               </motion.div>
             ))}
           </div>
+        </motion.div>
+      )}
+
+      {/* Tasks to Review Tab */}
+      {activeTab === 'review' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-4"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-2">Tasks Awaiting Review</h2>
+              <p className="text-gray-400">Team members have submitted these tasks for your feedback</p>
+            </div>
+          </div>
+
+          {tasksToReview.map((task, index) => (
+            <motion.div
+              key={task.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
+              className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xl hover:border-cyan-500/30 transition-all"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-bold text-white">{task.title}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase ${
+                      task.priority === 'high' 
+                        ? 'bg-red-500/20 text-red-400' 
+                        : 'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {task.priority}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 mb-4">{task.description}</p>
+                  <div className="flex items-center gap-6 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-xs font-bold">
+                        {task.assignee.charAt(0)}
+                      </div>
+                      <span className="text-gray-400">
+                        <span className="text-white font-medium">{task.assignee}</span> submitted
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <Calendar className="w-4 h-4" />
+                      <span>{task.submittedDate}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 pt-4 border-t border-white/10">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium hover:from-green-400 hover:to-emerald-500 transition-all flex items-center justify-center gap-2"
+                >
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Approve</span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  <span>Request Changes</span>
+                </motion.button>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
       )}
     </div>

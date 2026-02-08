@@ -139,16 +139,22 @@ export const LeaderDashboard = ({
                 Tasks
               </button>
               <button
-                onClick={() => onNavigate?.('analytics')}
+                onClick={() => onNavigate?.('feedback')}
                 className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 hover:backdrop-blur-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
               >
-                Analytics
+                Feedback
               </button>
               <button
                 onClick={() => onNavigate?.('investor-hub')}
                 className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 hover:backdrop-blur-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
               >
                 Investor Hub
+              </button>
+              <button
+                onClick={() => onNavigate?.('analytics')}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 hover:backdrop-blur-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
+              >
+                Analytics
               </button>
               <button
                 onClick={() => onNavigate?.('profile')}
@@ -424,7 +430,7 @@ export const LeaderDashboard = ({
                 className="mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
               >
                 <motion.button 
-                  onClick={() => setCurrentSection('pitch')}
+                  onClick={() => onNavigate?.('investor-hub')}
                   whileHover={{ scale: 1.03, y: -3 }}
                   whileTap={{ scale: 0.98 }}
                   className="flex items-center gap-4 p-6 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-cyan-500/30 text-white hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all text-left"
@@ -448,7 +454,7 @@ export const LeaderDashboard = ({
                   </div>
                 </motion.button>
                 <motion.button 
-                  onClick={() => setCurrentSection('analytics')}
+                  onClick={() => onNavigate?.('analytics')}
                   whileHover={{ scale: 1.03, y: -3 }}
                   whileTap={{ scale: 0.98 }}
                   className="flex items-center gap-4 p-6 rounded-2xl border border-white/10 text-white hover:bg-white/5 transition-colors text-left"

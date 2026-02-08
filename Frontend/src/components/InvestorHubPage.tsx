@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Target, 
   TrendingUp, 
@@ -15,7 +15,10 @@ import {
   Users,
   Calendar,
   Upload,
-  FileCheck
+  FileCheck,
+  X,
+  Copy,
+  Send
 } from 'lucide-react';
 
 export const InvestorHubPage = () => {
@@ -27,6 +30,98 @@ export const InvestorHubPage = () => {
     burn: '5000',
     runway: '6'
   });
+  const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
+  const [showPitchModal, setShowPitchModal] = useState(false);
+  const [generatedPitch, setGeneratedPitch] = useState('');
+
+  const handleGeneratePitch = () => {
+    setIsGeneratingPitch(true);
+    
+    // Simulate AI pitch generation
+    setTimeout(() => {
+      const pitch = `**The Problem**
+
+The pet healthcare industry faces a critical challenge: pet owners struggle to maintain consistent preventive care, leading to expensive emergency treatments and reduced pet health outcomes. With 120 active users already experiencing this pain point, the demand for a comprehensive solution is clear.
+
+**Our Solution**
+
+We've built an intelligent platform that revolutionizes pet healthcare management. Our system combines:
+• Real-time health tracking and alerts
+• Veterinary telemedicine integration
+• Automated appointment scheduling
+• Personalized care recommendations powered by AI
+
+**Market Opportunity**
+
+The pet tech market is projected to reach $20B by 2027, growing at 25% annually. With over 85 million pet-owning households in the US alone, we're addressing a massive and growing market segment that prioritizes pet wellness.
+
+**Traction & Progress**
+
+• ${metrics.users} active users and growing at ${metrics.growth}% month-over-month
+• Strong product-market fit validated through user feedback
+• Strategic partnerships with 3 veterinary clinics established
+• Platform stability and feature development on track
+
+**Business Model**
+
+Recurring revenue through subscription tiers:
+• Basic: $9.99/month - Essential health tracking
+• Premium: $24.99/month - Full telemedicine access
+• Enterprise: Custom pricing for vet clinics
+
+Current MRR: $${metrics.mrr} with proven unit economics
+
+**The Team**
+
+Our founding team brings deep expertise in:
+• Healthcare technology and veterinary medicine
+• Product development and user experience
+• Growth marketing and customer success
+
+Combined, we have 25+ years of experience building successful healthtech products.
+
+**Go-to-Market Strategy**
+
+Phase 1: Direct-to-consumer marketing through pet owner communities
+Phase 2: B2B partnerships with veterinary clinics and pet insurance providers
+Phase 3: International expansion starting with Canada and UK
+
+**Financial Projections**
+
+Year 1: $250K ARR with 2,000 users
+Year 2: $1.2M ARR with 10,000 users
+Year 3: $5M ARR with 45,000 users
+
+Current burn rate: $${metrics.burn}/month
+Runway: ${metrics.runway} months
+
+**The Ask**
+
+Seeking $500K seed funding to:
+• Expand engineering team (40%)
+• Scale marketing and user acquisition (35%)
+• Enhance AI capabilities (15%)
+• Operations and runway extension (10%)
+
+This capital will take us to Series A milestones: 10K users and $1M ARR.
+
+**Why Now?**
+
+Post-pandemic pet ownership has surged, digital health adoption is mainstream, and pet owners are actively seeking solutions. We're positioned at the perfect intersection of market readiness and technological capability.
+
+**Join Us**
+
+We're building the future of pet healthcare. With your partnership, we can revolutionize how millions of pet owners care for their beloved companions while building a category-defining company.`;
+      
+      setGeneratedPitch(pitch);
+      setIsGeneratingPitch(false);
+      setShowPitchModal(true);
+    }, 3000);
+  };
+
+  const handleCopyPitch = () => {
+    navigator.clipboard.writeText(generatedPitch.replace(/\*\*/g, ''));
+  };
 
   const pitchScore = 67;
   const scoreItems = [
@@ -98,7 +193,7 @@ export const InvestorHubPage = () => {
           {/* Score Circle */}
           <div className="flex items-center justify-center lg:justify-start">
             <div className="relative w-48 h-48 flex-shrink-0">
-              <svg className="w-full h-full transform -rotate-90">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 192 192">
                 <circle
                   cx="96"
                   cy="96"
@@ -127,9 +222,9 @@ export const InvestorHubPage = () => {
                   </linearGradient>
                 </defs>
               </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-5xl font-bold text-white">{pitchScore}</div>
-                <div className="text-sm text-gray-400">/ 100</div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                <div className="text-5xl font-bold text-white leading-none">{pitchScore}</div>
+                <div className="text-sm text-gray-400 leading-none">/ 100</div>
               </div>
             </div>
           </div>
@@ -493,12 +588,23 @@ export const InvestorHubPage = () => {
         </div>
 
         <motion.button
-          whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(168, 85, 247, 0.4)" }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 text-white text-lg font-bold hover:from-purple-400 hover:to-pink-500 transition-all flex items-center justify-center gap-3"
+          onClick={handleGeneratePitch}
+          disabled={isGeneratingPitch}
+          whileHover={{ scale: isGeneratingPitch ? 1 : 1.02, boxShadow: isGeneratingPitch ? "" : "0 0 30px rgba(168, 85, 247, 0.4)" }}
+          whileTap={{ scale: isGeneratingPitch ? 1 : 0.98 }}
+          className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 text-white text-lg font-bold hover:from-purple-400 hover:to-pink-500 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          <Sparkles className="w-6 h-6" />
-          <span>Generate Pitch Deck</span>
+          {isGeneratingPitch ? (
+            <>
+              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Analyzing Your Data...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-6 h-6" />
+              <span>Generate Pitch Deck</span>
+            </>
+          )}
         </motion.button>
 
         <div className="mt-6 p-4 rounded-xl bg-white/5 border border-white/10">
@@ -533,6 +639,122 @@ export const InvestorHubPage = () => {
           </div>
         </div>
       </motion.div>
+      
+      {/* AI Generated Pitch Modal */}
+      <AnimatePresence>
+        {showPitchModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowPitchModal(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-4xl my-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[70vh]"
+            >
+              {/* Header - Fixed */}
+              <div className="flex items-start justify-between p-6 md:p-8 gap-4 border-b border-white/10 flex-shrink-0">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                      <Sparkles className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white">AI-Generated Pitch</h2>
+                  </div>
+                  <p className="text-sm text-gray-400">Generated based on your startup progress and metrics</p>
+                </div>
+                <button
+                  onClick={() => setShowPitchModal(false)}
+                  className="p-2 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
+                >
+                  <X className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                </button>
+              </div>
+
+              {/* Pitch Content - Scrollable */}
+              <div 
+                className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#a855f7 transparent'
+                }}
+              >
+                <div className="prose prose-invert max-w-none">
+                  {generatedPitch.split('\n\n').map((paragraph, index) => {
+                    if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                      return (
+                        <h3 key={index} className="text-xl md:text-2xl font-bold text-white mt-6 mb-4 flex items-center gap-2">
+                          <div className="w-1 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                          {paragraph.replace(/\*\*/g, '')}
+                        </h3>
+                      );
+                    }
+                    
+                    if (paragraph.includes('•')) {
+                      const lines = paragraph.split('\n');
+                      return (
+                        <div key={index} className="mb-4">
+                          {lines.map((line, i) => {
+                            if (line.startsWith('•')) {
+                              return (
+                                <div key={i} className="flex items-start gap-3 mb-2 text-gray-300">
+                                  <span className="text-purple-400 mt-1">✓</span>
+                                  <span className="flex-1">{line.replace('• ', '')}</span>
+                                </div>
+                              );
+                            }
+                            return <p key={i} className="text-gray-300 mb-2 leading-relaxed">{line}</p>;
+                          })}
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <p key={index} className="text-gray-300 mb-4 leading-relaxed">
+                        {paragraph}
+                      </p>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Actions - Fixed Footer */}
+              <div className="p-6 md:p-8 border-t border-white/10 flex flex-col sm:flex-row gap-3 flex-shrink-0">
+                <motion.button
+                  onClick={handleCopyPitch}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Copy className="w-5 h-5" />
+                  Copy to Clipboard
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold hover:from-purple-400 hover:to-pink-500 transition-all flex items-center justify-center gap-2"
+                >
+                  <Send className="w-5 h-5" />
+                  Share with Team
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center justify-center gap-2"
+                >
+                  <Download className="w-5 h-5" />
+                  Export PDF
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

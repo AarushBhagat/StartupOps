@@ -54,10 +54,9 @@ export const DashboardLayout = ({
     { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
     { id: 'tasks', label: 'Tasks', icon: ListTodo },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'investor-hub', label: 'Investor Hub', icon: Briefcase },
-    { id: 'profile', label: 'Profile', icon: Building2 },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'profile', label: 'Profile', icon: Building2 }
   ];
 
   const teamNavItems = [
@@ -108,7 +107,7 @@ export const DashboardLayout = ({
           {/* Centered Navigation Pill */}
           <div className="hidden md:flex items-center justify-center absolute left-1/2 -translate-x-1/2 bg-white/5 backdrop-blur-md rounded-full px-3 py-2 border border-white/10 shadow-lg">
             <div className="flex items-center gap-2">
-              {navItems.slice(0, 5).map((item) => (
+              {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
