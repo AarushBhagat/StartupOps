@@ -479,9 +479,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👥 Team / Authors
 
-- **Developer:** [Your Name]
+- **Developer:** Aarush
 - **GitHub:** [@AarushBhagat](https://github.com/AarushBhagat)
-- **Email:** your.email@example.com
+- **Email:** aarushbhagat093.com
 
 ---
 
@@ -502,8 +502,7 @@ Need help? Here's where to reach us:
 
 - **Documentation:** Check the [docs](Backend/README.md) first
 - **Issues:** [GitHub Issues](https://github.com/AarushBhagat/StartupOps/issues)
-- **Email:** support@startupops.com
-- **Discord:** [Join our community](https://discord.gg/startupops)
+- **Email:** aarushbhagat093@gmail.com
 
 ---
 
