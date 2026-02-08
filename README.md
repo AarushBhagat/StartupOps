@@ -481,7 +481,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - **Developer:** Aarush
 - **GitHub:** [@AarushBhagat](https://github.com/AarushBhagat)
-- **Email:** aarushbhagat093.com
+- **Email:** aarushbhagat093@gmail.com
 
 ---
 
