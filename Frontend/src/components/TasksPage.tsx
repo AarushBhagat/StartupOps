@@ -69,7 +69,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
     try {
       const { auth } = await import('../lib/firebase');
       const token = await auth.currentUser?.getIdToken();
-      const res = await fetch('http://localhost:8080/api/startup/task/generate', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/startup/task/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

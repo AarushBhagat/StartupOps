@@ -175,7 +175,7 @@ export default function App() {
             return;
           }
 
-          const response = await fetch('http://localhost:8080/api/startup/onboard', {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/startup/onboard`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
