@@ -55,7 +55,6 @@ export const DashboardLayout = ({
   const leaderNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
     { id: 'tasks', label: 'Tasks', icon: ListTodo },
-    { id: 'roadmap', label: 'Roadmap', icon: Target },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'investor-hub', label: 'Investor Hub', icon: Briefcase },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -65,7 +64,6 @@ export const DashboardLayout = ({
   const teamNavItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
     { id: 'tasks', label: 'My Tasks', icon: ListTodo },
-    { id: 'roadmap', label: 'Roadmap', icon: Target },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
