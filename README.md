@@ -11,7 +11,7 @@ A modern, AI-powered platform designed for startup founders and teams to automat
 
 ## 📺 WATCH DEMO VIDEO HERE 🎥
 🎬 **StartupOps - Full Project Walkthrough & Demo**  
-🔗 **Google Drive Link:** [View Demo](https://drive.google.com/drive/folders/1-VDqbi1mQ9GNS_rUbqkKLuulUFbSBoU6)
+🔗 **Live Link:** [LIVE](https://startupops-omega.vercel.app/)
 
 ---
 
