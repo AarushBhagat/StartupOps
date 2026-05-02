@@ -73,15 +73,15 @@ export default function App() {
         setIsAuthenticated(true);
         setUserEmail(user.email || '');
       }
-      
+
       // Dynamic logic based on real UserProfile from Firestore
       if (user.startupProfile) {
         setUserRole('leader'); // Currently everyone who creates a profile is a leader
         setHasStartupInfo(true);
         setStartupInfo(user.startupProfile);
         setNeedsOnboarding(false);
-        // If they are on auth pages or home, redirect to dashboard
-        if (['home', 'login', 'signup'].includes(currentPage)) {
+        // If they are on auth pages, home, or onboarding, redirect to dashboard
+        if (['home', 'login', 'signup', 'onboarding'].includes(currentPage)) {
           setCurrentPage('dashboard');
         }
       } else {
@@ -133,7 +133,7 @@ export default function App() {
   // Handle plan selection
   const handlePlanSelection = (planName: string) => {
     setSelectedPlan(planName);
-    
+
     if (planName === 'Free') {
       setCurrentPage('dashboard');
     } else {
@@ -164,12 +164,12 @@ export default function App() {
       setStartupInfo(ideaData);
       setNeedsOnboarding(false);
       setCurrentPage('plans');
-      
+
       try {
         if (user) {
           const { auth } = await import('./lib/firebase');
           const token = await auth.currentUser?.getIdToken();
-          
+
           if (!token) {
             console.error("No valid Firebase auth token available.");
             return;
@@ -183,9 +183,10 @@ export default function App() {
             },
             body: JSON.stringify(ideaData)
           });
-          
+
           if (!response.ok) {
             console.error('Failed to save onboarding data to backend', response.statusText);
+            alert(`Failed to save to backend. Status: ${response.status}. Please check your backend connection.`);
           } else {
             const data = await response.json();
             console.log('Successfully saved onboarding data to backend:', data);
@@ -193,6 +194,7 @@ export default function App() {
         }
       } catch (error) {
         console.error('Network error saving onboarding data:', error);
+        alert(`Network Error: Ensure your VITE_API_BASE_URL and CORS settings are correct. (${(error as Error).message})`);
       }
     } else {
       setHasStartupInfo(false);
@@ -241,10 +243,10 @@ export default function App() {
           font-family: 'Inter Tight', sans-serif;
         }
       `}</style>
-      
+
       {/* Navigation - Show on all pages except auth flow and dashboards */}
       {!['login', 'signup', 'payment', 'onboarding', 'dashboard', 'team-dashboard', 'tasks', 'feedback', 'analytics', 'investor-hub', 'profile', 'settings'].includes(currentPage) && (
-        <Navigation 
+        <Navigation
           onNavigate={scrollToSection}
           onGetStarted={() => setCurrentPage('signup')}
           currentPage={currentPage}
@@ -252,7 +254,7 @@ export default function App() {
           isAuthenticated={isAuthenticated}
         />
       )}
-      
+
       {/* Home Page */}
       <AnimatePresence mode="wait">
         {currentPage === 'home' && (
@@ -264,11 +266,11 @@ export default function App() {
             transition={{ duration: 0.3 }}
           >
             <div className="relative z-10 bg-[#02040a] mb-[80vh] shadow-[0_50px_100px_rgba(0,0,0,1)]">
-             <div id="home">
-               <Hero onGetStarted={() => setCurrentPage('signup')} />
-             </div>
-             
-             <div className="space-y-32 pb-32">
+              <div id="home">
+                <Hero onGetStarted={() => setCurrentPage('signup')} />
+              </div>
+
+              <div className="space-y-32 pb-32">
                 <div id="trusted-by">
                   <TrustedBy />
                 </div>
@@ -281,263 +283,263 @@ export default function App() {
                 <div id="success-stories">
                   <RefinedPortfolio />
                 </div>
-             </div>
-          </div>
+              </div>
+            </div>
 
-          <RevealFooter onGetStarted={() => setCurrentPage('signup')} />
-        </motion.div>
-      )}
+            <RevealFooter onGetStarted={() => setCurrentPage('signup')} />
+          </motion.div>
+        )}
 
-      {/* Plan Selection Page */}
-      {currentPage === 'plans' && (
-        <motion.div
-          key="plans"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <PlanSelection 
-            onBack={() => setCurrentPage('home')} 
-            onSelectPlan={handlePlanSelection}
-          />
-        </motion.div>
-      )}
-
-      {/* Login Page */}
-      {currentPage === 'login' && (
-        <motion.div
-          key="login"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Login 
-            onBack={() => setCurrentPage('home')}
-            onLogin={handleLogin}
-            onSignup={() => setCurrentPage('signup')}
-          />
-        </motion.div>
-      )}
-
-      {/* Signup Page */}
-      {currentPage === 'signup' && (
-        <motion.div
-          key="signup"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Signup 
-            onBack={() => setCurrentPage('home')}
-            onSignup={handleSignupComplete}
-            onLogin={() => setCurrentPage('login')}
-            selectedPlan={selectedPlan || undefined}
-          />
-        </motion.div>
-      )}
-
-      {/* Payment Page */}
-      {currentPage === 'payment' && selectedPlan && (
-        <motion.div
-          key="payment"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Payment 
-            onBack={() => setCurrentPage('plans')}
-            onComplete={handlePaymentComplete}
-            selectedPlan={selectedPlan}
-          />
-        </motion.div>
-      )}
-
-      {/* Onboarding */}
-      {currentPage === 'onboarding' && isAuthenticated && userRole === 'leader' && (
-        <motion.div
-          key="onboarding"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Onboarding 
-            onComplete={handleOnboardingComplete}
-          />
-        </motion.div>
-      )}
-
-      {/* Dashboard - Leader */}
-      {currentPage === 'dashboard' && isAuthenticated && userRole === 'leader' && (
-        <motion.div
-          key="leader-dashboard"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <LeaderDashboard 
-            onLogout={handleLogout}
-            onNavigate={setCurrentPage}
-            onSetupStartup={handleSetupStartup}
-            currentPage={currentPage}
-          />
-        </motion.div>
-      )}
-
-      {/* Dashboard - Team Member */}
-      {currentPage === 'dashboard' && isAuthenticated && userRole === 'team' && (
-        <motion.div
-          key="team-dashboard"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <TeamDashboard 
-            onLogout={handleLogout}
-            onNavigate={setCurrentPage}
-            userName={getUserName()}
-            currentPage={currentPage}
-          />
-        </motion.div>
-      )}
-
-      {/* Tasks Page */}
-      {currentPage === 'tasks' && isAuthenticated && (
-        <motion.div
-          key="tasks"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DashboardLayout
-            currentSection="tasks"
-            onNavigate={setCurrentPage}
-            onLogout={handleLogout}
-            userName={getUserName()}
-            userRole={userRole || 'team'}
-            startupName={startupInfo?.startupName || 'Your Startup'}
+        {/* Plan Selection Page */}
+        {currentPage === 'plans' && (
+          <motion.div
+            key="plans"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
           >
-            <TasksPage selectedTemplates={startupInfo?.selectedTemplates || []} />
-          </DashboardLayout>
-        </motion.div>
-      )}
+            <PlanSelection
+              onBack={() => setCurrentPage('home')}
+              onSelectPlan={handlePlanSelection}
+            />
+          </motion.div>
+        )}
 
-      {/* Feedback Page */}
-      {currentPage === 'feedback' && isAuthenticated && (
-        <motion.div
-          key="feedback"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DashboardLayout
-            currentSection="feedback"
-            onNavigate={setCurrentPage}
-            onLogout={handleLogout}
-            userName={getUserName()}
-            userRole={userRole || 'team'}
-            startupName={startupInfo?.startupName || 'Your Startup'}
+        {/* Login Page */}
+        {currentPage === 'login' && (
+          <motion.div
+            key="login"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           >
-            <FeedbackPage />
-          </DashboardLayout>
-        </motion.div>
-      )}
+            <Login
+              onBack={() => setCurrentPage('home')}
+              onLogin={handleLogin}
+              onSignup={() => setCurrentPage('signup')}
+            />
+          </motion.div>
+        )}
 
-      {/* Analytics Page */}
-      {currentPage === 'analytics' && isAuthenticated && (
-        <motion.div
-          key="analytics"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DashboardLayout
-            currentSection="analytics"
-            onNavigate={setCurrentPage}
-            onLogout={handleLogout}
-            userName={getUserName()}
-            userRole={userRole || 'team'}
-            startupName={startupInfo?.startupName || 'Your Startup'}
+        {/* Signup Page */}
+        {currentPage === 'signup' && (
+          <motion.div
+            key="signup"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           >
-            <AnalyticsPage />
-          </DashboardLayout>
-        </motion.div>
-      )}
+            <Signup
+              onBack={() => setCurrentPage('home')}
+              onSignup={handleSignupComplete}
+              onLogin={() => setCurrentPage('login')}
+              selectedPlan={selectedPlan || undefined}
+            />
+          </motion.div>
+        )}
 
-      {/* Investor Hub Page - Leader Only */}
-      {currentPage === 'investor-hub' && isAuthenticated && userRole === 'leader' && (
-        <motion.div
-          key="investor-hub"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DashboardLayout
-            currentSection="investor-hub"
-            onNavigate={setCurrentPage}
-            onLogout={handleLogout}
-            userName={getUserName()}
-            userRole="leader"
-            startupName={startupInfo?.startupName || 'Your Startup'}
+        {/* Payment Page */}
+        {currentPage === 'payment' && selectedPlan && (
+          <motion.div
+            key="payment"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
           >
-            <InvestorHubPage />
-          </DashboardLayout>
-        </motion.div>
-      )}
+            <Payment
+              onBack={() => setCurrentPage('plans')}
+              onComplete={handlePaymentComplete}
+              selectedPlan={selectedPlan}
+            />
+          </motion.div>
+        )}
 
-      {/* Profile Page */}
-      {currentPage === 'profile' && isAuthenticated && (
-        <motion.div
-          key="profile"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DashboardLayout
-            currentSection="profile"
-            onNavigate={setCurrentPage}
-            onLogout={handleLogout}
-            userName={getUserName()}
-            userRole={userRole || 'team'}
-            startupName={startupInfo?.startupName || 'Your Startup'}
+        {/* Onboarding */}
+        {currentPage === 'onboarding' && isAuthenticated && userRole === 'leader' && (
+          <motion.div
+            key="onboarding"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           >
-            <StartupProfilePage />
-          </DashboardLayout>
-        </motion.div>
-      )}
+            <Onboarding
+              onComplete={handleOnboardingComplete}
+            />
+          </motion.div>
+        )}
 
-      {/* Settings Page */}
-      {currentPage === 'settings' && isAuthenticated && (
-        <motion.div
-          key="settings"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DashboardLayout
-            currentSection="settings"
-            onNavigate={setCurrentPage}
-            onLogout={handleLogout}
-            userName={getUserName()}
-            userRole={userRole || 'team'}
-            startupName={startupInfo?.startupName || 'Your Startup'}
+        {/* Dashboard - Leader */}
+        {currentPage === 'dashboard' && isAuthenticated && userRole === 'leader' && (
+          <motion.div
+            key="leader-dashboard"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <SettingsPage />
-          </DashboardLayout>
-        </motion.div>
-      )}
+            <LeaderDashboard
+              onLogout={handleLogout}
+              onNavigate={setCurrentPage}
+              onSetupStartup={handleSetupStartup}
+              currentPage={currentPage}
+            />
+          </motion.div>
+        )}
+
+        {/* Dashboard - Team Member */}
+        {currentPage === 'dashboard' && isAuthenticated && userRole === 'team' && (
+          <motion.div
+            key="team-dashboard"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <TeamDashboard
+              onLogout={handleLogout}
+              onNavigate={setCurrentPage}
+              userName={getUserName()}
+              currentPage={currentPage}
+            />
+          </motion.div>
+        )}
+
+        {/* Tasks Page */}
+        {currentPage === 'tasks' && isAuthenticated && (
+          <motion.div
+            key="tasks"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DashboardLayout
+              currentSection="tasks"
+              onNavigate={setCurrentPage}
+              onLogout={handleLogout}
+              userName={getUserName()}
+              userRole={userRole || 'team'}
+              startupName={startupInfo?.startupName || 'Your Startup'}
+            >
+              <TasksPage selectedTemplates={startupInfo?.selectedTemplates || []} />
+            </DashboardLayout>
+          </motion.div>
+        )}
+
+        {/* Feedback Page */}
+        {currentPage === 'feedback' && isAuthenticated && (
+          <motion.div
+            key="feedback"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DashboardLayout
+              currentSection="feedback"
+              onNavigate={setCurrentPage}
+              onLogout={handleLogout}
+              userName={getUserName()}
+              userRole={userRole || 'team'}
+              startupName={startupInfo?.startupName || 'Your Startup'}
+            >
+              <FeedbackPage />
+            </DashboardLayout>
+          </motion.div>
+        )}
+
+        {/* Analytics Page */}
+        {currentPage === 'analytics' && isAuthenticated && (
+          <motion.div
+            key="analytics"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DashboardLayout
+              currentSection="analytics"
+              onNavigate={setCurrentPage}
+              onLogout={handleLogout}
+              userName={getUserName()}
+              userRole={userRole || 'team'}
+              startupName={startupInfo?.startupName || 'Your Startup'}
+            >
+              <AnalyticsPage />
+            </DashboardLayout>
+          </motion.div>
+        )}
+
+        {/* Investor Hub Page - Leader Only */}
+        {currentPage === 'investor-hub' && isAuthenticated && userRole === 'leader' && (
+          <motion.div
+            key="investor-hub"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DashboardLayout
+              currentSection="investor-hub"
+              onNavigate={setCurrentPage}
+              onLogout={handleLogout}
+              userName={getUserName()}
+              userRole="leader"
+              startupName={startupInfo?.startupName || 'Your Startup'}
+            >
+              <InvestorHubPage />
+            </DashboardLayout>
+          </motion.div>
+        )}
+
+        {/* Profile Page */}
+        {currentPage === 'profile' && isAuthenticated && (
+          <motion.div
+            key="profile"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DashboardLayout
+              currentSection="profile"
+              onNavigate={setCurrentPage}
+              onLogout={handleLogout}
+              userName={getUserName()}
+              userRole={userRole || 'team'}
+              startupName={startupInfo?.startupName || 'Your Startup'}
+            >
+              <StartupProfilePage />
+            </DashboardLayout>
+          </motion.div>
+        )}
+
+        {/* Settings Page */}
+        {currentPage === 'settings' && isAuthenticated && (
+          <motion.div
+            key="settings"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DashboardLayout
+              currentSection="settings"
+              onNavigate={setCurrentPage}
+              onLogout={handleLogout}
+              userName={getUserName()}
+              userRole={userRole || 'team'}
+              startupName={startupInfo?.startupName || 'Your Startup'}
+            >
+              <SettingsPage />
+            </DashboardLayout>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Command Palette - Accessible from all authenticated pages */}

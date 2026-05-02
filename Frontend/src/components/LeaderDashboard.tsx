@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'motion/react';
-import { 
+import {
   CheckCircle2,
   Clock,
   AlertCircle,
@@ -28,9 +28,9 @@ interface LeaderDashboardProps {
   currentPage?: string;
 }
 
-export const LeaderDashboard = ({ 
-  onLogout, 
-  onNavigate, 
+export const LeaderDashboard = ({
+  onLogout,
+  onNavigate,
   onSetupStartup,
   currentPage = 'dashboard'
 }: LeaderDashboardProps) => {
@@ -38,13 +38,13 @@ export const LeaderDashboard = ({
   const [currentSection, setCurrentSection] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Real dynamic data from AuthContext
   const userName = user?.displayName || "Team Leader";
   const hasStartupInfo = !!user?.startupProfile;
   const startupInfo = user?.startupProfile;
   const roadmap = user?.roadmap;
-  
+
   // Mouse tracking for parallax
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -53,7 +53,7 @@ export const LeaderDashboard = ({
     const { left, top, width, height } = currentTarget.getBoundingClientRect();
     const x = (clientX - left) / width - 0.5;
     const y = (clientY - top) / height - 0.5;
-    
+
     mouseX.set(x);
     mouseY.set(y);
   };
@@ -68,12 +68,15 @@ export const LeaderDashboard = ({
 
   const recentTasks: any[] = []; // No team tasks implemented yet
 
-  // Map AI roadmap to actionable steps
-  const nextSteps = roadmap?.milestones?.map((m: any) => ({
+  // Map AI roadmap to actionable steps, limited to 4 to prevent UI stretching
+  const allSteps = roadmap?.milestones?.map((m: any) => ({
     title: m.title,
     description: m.description || `Current status: ${m.status}`,
     done: m.status === 'completed'
   })) || [];
+  
+  const nextSteps = allSteps.slice(0, 4);
+  const hasMoreSteps = allSteps.length > 4;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -87,7 +90,7 @@ export const LeaderDashboard = ({
   };
 
   return (
-    <motion.div 
+    <motion.div
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className="min-h-screen bg-[#02040a] text-white relative overflow-hidden"
@@ -96,7 +99,7 @@ export const LeaderDashboard = ({
       transition={{ duration: 0.5 }}
     >
       {/* Dashboard Navbar - Matching Landing Page Style */}
-      <motion.nav 
+      <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -105,7 +108,7 @@ export const LeaderDashboard = ({
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
-          <button 
+          <button
             onClick={() => onNavigate?.('dashboard')}
             className="hover:opacity-80 transition-opacity"
           >
@@ -163,10 +166,10 @@ export const LeaderDashboard = ({
           </button>
         </div>
       </motion.nav>
-      
+
       {/* Animated Background with Parallax */}
       <AnimatedBackground mouseX={mouseX} mouseY={mouseY} variant="dashboard" />
-      
+
       {/* Floating Geometric Shapes */}
       <FloatingShapes mouseX={mouseX} mouseY={mouseY} count={5} />
 
@@ -191,7 +194,7 @@ export const LeaderDashboard = ({
               >
                 <Rocket className="w-12 h-12 text-white" />
               </motion.div>
-              
+
               <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Welcome to StartupOps!</h1>
               <p className="text-lg md:text-xl text-gray-400 max-w-2xl mb-8">
                 Ready to turn your vision into reality? Let's set up your startup and get you on the path to success.
@@ -210,7 +213,7 @@ export const LeaderDashboard = ({
                 <p className="text-center text-sm font-medium text-gray-400 tracking-[0.2em] uppercase mb-8">
                   Everything You Need to Succeed
                 </p>
-                <InfiniteMarquee 
+                <InfiniteMarquee
                   items={[
                     "🎯 AI Task Generation",
                     "👥 Team Collaboration",
@@ -260,13 +263,13 @@ export const LeaderDashboard = ({
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8 md:mb-12"
               >
-                <SplitText 
+                <SplitText
                   text={`${startupInfo?.startupName || 'Your Startup'} 🚀`}
                   className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-4 tracking-tighter"
                   delay={0}
                   duration={0.05}
                 />
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
@@ -288,8 +291,8 @@ export const LeaderDashboard = ({
                     key={index}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    whileHover={{ 
-                      scale: 1.05, 
+                    whileHover={{
+                      scale: 1.05,
                       y: -5,
                       boxShadow: "0 20px 40px rgba(6, 182, 212, 0.2)"
                     }}
@@ -297,7 +300,7 @@ export const LeaderDashboard = ({
                     transition={{ delay: 0.1 + index * 0.1, type: "spring", stiffness: 300 }}
                     className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 md:p-6 hover:border-cyan-500/30 transition-colors cursor-pointer"
                   >
-                    <motion.div 
+                    <motion.div
                       animate={{ rotate: [0, 5, -5, 0] }}
                       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: index * 0.2 }}
                       className={`w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3 md:mb-4`}
@@ -327,11 +330,10 @@ export const LeaderDashboard = ({
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 + index * 0.1 }}
-                        className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${
-                          step.done 
-                            ? 'bg-green-500/5 border-green-500/20' 
+                        className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${step.done
+                            ? 'bg-green-500/5 border-green-500/20'
                             : 'bg-white/5 border-white/10 hover:border-cyan-500/30'
-                        }`}
+                          }`}
                       >
                         <div className={`p-2 rounded-lg ${step.done ? 'bg-green-500/20' : 'bg-cyan-500/20'}`}>
                           {step.done ? (
@@ -347,6 +349,14 @@ export const LeaderDashboard = ({
                       </motion.div>
                     ))}
                   </div>
+                  {hasMoreSteps && (
+                    <button
+                      onClick={() => onNavigate?.('tasks')}
+                      className="w-full mt-6 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                    >
+                      View Full Roadmap ({allSteps.length - 4} more)
+                    </button>
+                  )}
                 </motion.div>
 
                 {/* Recent Activity */}
@@ -358,7 +368,7 @@ export const LeaderDashboard = ({
                 >
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl md:text-2xl font-bold">Team Tasks</h2>
-                    <button 
+                    <button
                       onClick={() => setCurrentSection('tasks')}
                       className="p-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 transition-colors"
                     >
@@ -371,7 +381,7 @@ export const LeaderDashboard = ({
                         key={index}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ 
+                        whileHover={{
                           scale: 1.02,
                           x: 5,
                           boxShadow: "0 10px 30px rgba(6, 182, 212, 0.15)"
@@ -391,11 +401,10 @@ export const LeaderDashboard = ({
                               </div>
                             </div>
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ml-2 ${
-                            task.priority === 'high' 
-                              ? 'bg-red-500/20 text-red-400' 
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ml-2 ${task.priority === 'high'
+                              ? 'bg-red-500/20 text-red-400'
                               : 'bg-yellow-500/20 text-yellow-400'
-                          }`}>
+                            }`}>
                             {task.priority}
                           </span>
                         </div>
@@ -404,7 +413,7 @@ export const LeaderDashboard = ({
                       <div className="text-gray-400 text-sm py-4 text-center">No pending team tasks.</div>
                     )}
                   </div>
-                  <button 
+                  <button
                     onClick={() => setCurrentSection('tasks')}
                     className="w-full mt-4 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-colors font-medium text-sm"
                   >
@@ -420,7 +429,7 @@ export const LeaderDashboard = ({
                 transition={{ delay: 0.6 }}
                 className="mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
               >
-                <motion.button 
+                <motion.button
                   onClick={() => onNavigate?.('investor-hub')}
                   whileHover={{ scale: 1.03, y: -3 }}
                   whileTap={{ scale: 0.98 }}
@@ -432,7 +441,7 @@ export const LeaderDashboard = ({
                     <p className="text-sm text-gray-400">AI-powered presentations</p>
                   </div>
                 </motion.button>
-                <motion.button 
+                <motion.button
                   onClick={() => setCurrentSection('team')}
                   whileHover={{ scale: 1.03, y: -3 }}
                   whileTap={{ scale: 0.98 }}
@@ -444,7 +453,7 @@ export const LeaderDashboard = ({
                     <p className="text-sm text-gray-400">Collaborate together</p>
                   </div>
                 </motion.button>
-                <motion.button 
+                <motion.button
                   onClick={() => onNavigate?.('analytics')}
                   whileHover={{ scale: 1.03, y: -3 }}
                   whileTap={{ scale: 0.98 }}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Search, Filter, Calendar, User, Flag, CheckCircle2, CheckCircle, Clock, AlertCircle, Sparkles, X, ChevronRight, Target, MoreVertical } from 'lucide-react';
+import { Plus, Search, Filter, Calendar, User, Flag, CheckCircle2, CheckCircle, Clock, AlertCircle, Sparkles, X, ChevronRight, Target, MoreVertical, Zap, ListTodo } from 'lucide-react';
 import { SelectedTemplatesBanner } from './SelectedTemplatesBanner';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -48,7 +48,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // New task form state
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
@@ -63,6 +63,22 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
 
   const { user } = useAuth();
   
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [activeSidebarTab, setActiveSidebarTab] = useState('todo');
+  const [navDelay, setNavDelay] = useState<NodeJS.Timeout | null>(null);
+
+  const sidebarItems = [
+    { id: 'milestones', label: 'Milestones', icon: Target, description: 'Project milestones and goals' },
+    { id: 'todo', label: 'To Do', icon: ListTodo, description: 'Tasks ready to be started' },
+    { id: 'in-progress', label: 'In Progress', icon: Clock, description: 'Tasks currently being worked on' },
+    { id: 'review', label: 'In Review', icon: AlertCircle, description: 'Tasks waiting for approval' },
+    { id: 'done', label: 'Completed', icon: CheckCircle2, description: 'Finished tasks' },
+  ];
+
+  const handleSidebarClick = (id: string) => {
+    setActiveSidebarTab(id);
+  };
+
   const handleGenerateAI = async () => {
     if (!aiPrompt.trim() || !user || !user.uid) return;
     setIsGenerating(true);
@@ -77,13 +93,13 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
         },
         body: JSON.stringify({ prompt: aiPrompt })
       });
-      
+
       if (!res.ok) {
         const errData = await res.json();
         throw new Error(errData.error || 'API Error');
       }
       const data = await res.json();
-      
+
       if (data.tasks && data.tasks.length > 0) {
         const currentMilestones = user.roadmap?.milestones || [];
         const newTasksWithFlag = data.tasks.map((t: any) => ({
@@ -93,14 +109,14 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
           createdDate: new Date().toLocaleDateString()
         }));
         const newMilestones = [...currentMilestones, ...newTasksWithFlag];
-        
+
         const { doc, updateDoc } = await import('firebase/firestore');
         const { db } = await import('../lib/firebase');
         const userRef = doc(db, 'users', user.uid);
         await updateDoc(userRef, {
           'roadmap.milestones': newMilestones
         });
-        
+
         setAiPrompt('');
         setShowAIGenerator(false);
       }
@@ -128,14 +144,14 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
         createdDate: new Date().toLocaleDateString()
       };
       const newMilestones = [...currentMilestones, newTask];
-      
+
       const { doc, updateDoc } = await import('firebase/firestore');
       const { db } = await import('../lib/firebase');
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, {
         'roadmap.milestones': newMilestones
       });
-      
+
       setShowAddTaskModal(false);
       setNewTaskTitle('');
       setNewTaskDescription('');
@@ -151,17 +167,17 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
     if (!user || !user.uid || !selectedTask) return;
     try {
       const currentMilestones = user.roadmap?.milestones || [];
-      const dbMilestones = currentMilestones.map((m: any) => 
+      const dbMilestones = currentMilestones.map((m: any) =>
         m.title === selectedTask.title ? { ...m, due: editDue, assignee: editAssignee } : m
       );
-      
+
       const { doc, updateDoc } = await import('firebase/firestore');
       const { db } = await import('../lib/firebase');
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, {
         'roadmap.milestones': dbMilestones
       });
-      
+
       setSelectedTask(null);
     } catch (err) {
       console.error('Failed to update task details:', err);
@@ -172,17 +188,17 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
     if (!user || !user.uid) return;
     try {
       const currentMilestones = user.roadmap?.milestones || [];
-      const dbMilestones = currentMilestones.map((m: any) => 
+      const dbMilestones = currentMilestones.map((m: any) =>
         m.title === task.title ? { ...m, status: newStatus } : m
       );
-      
+
       const { doc, updateDoc } = await import('firebase/firestore');
       const { db } = await import('../lib/firebase');
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, {
         'roadmap.milestones': dbMilestones
       });
-      
+
       setSelectedTask(null);
     } catch (err) {
       console.error('Failed to update task:', err);
@@ -194,14 +210,14 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
     try {
       const currentMilestones = user.roadmap?.milestones || [];
       const dbMilestones = currentMilestones.filter((m: any) => m.title !== task.title);
-      
+
       const { doc, updateDoc } = await import('firebase/firestore');
       const { db } = await import('../lib/firebase');
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, {
         'roadmap.milestones': dbMilestones
       });
-      
+
       setSelectedTask(null);
     } catch (err) {
       console.error('Failed to delete task:', err);
@@ -210,7 +226,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
 
   // Real dynamic data from AI Roadmap
   const aiRoadmap = user?.roadmap;
-  
+
   // Map AI generated milestones to the Milestone interface
   const aiMilestones: Milestone[] = aiRoadmap?.milestones?.map((m: any, index: number) => {
     const isCompleted = m.status === 'completed' || m.status === 'done';
@@ -227,27 +243,49 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
   }) || [];
 
   // Map AI generated milestones to actionable tasks in the Kanban board
-  const aiTasks: Task[] = aiRoadmap?.milestones?.map((m: any, index: number) => ({
-    id: `t${index}`,
-    title: m.title,
-    description: m.description,
-    status: (m.status === 'completed' || m.status === 'done') ? 'done' : (m.status || 'todo'),
-    priority: m.priority || 'medium',
-    milestone: m.title,
-    due: m.due,
-    assignee: m.assignee,
-    isAI: m.isAI || (m.title.toLowerCase().includes('ai') ? true : false),
-    method: m.method || (m.title.includes(':') ? m.title.split(':')[0] : undefined),
-    week: m.week || `Week ${Math.floor(index / 2) + 1}`,
-    createdDate: user?.startupProfile?.onboardedAt ? new Date(user.startupProfile.onboardedAt).toLocaleDateString() : undefined
-  })) || [];
+  const aiTasks: Task[] = aiRoadmap?.milestones?.map((m: any, index: number) => {
+    let rawStatus = m.status || 'todo';
+    if (rawStatus === 'completed') rawStatus = 'done';
+    if (rawStatus === 'pending') rawStatus = 'todo';
+    
+    return {
+      id: `t${index}`,
+      title: m.title,
+      description: m.description,
+      status: rawStatus as any,
+      priority: m.priority || 'medium',
+      milestone: m.title,
+      due: m.due,
+      assignee: m.assignee,
+      isAI: m.isAI || (m.title.toLowerCase().includes('ai') ? true : false),
+      method: m.method || (m.title.includes(':') ? m.title.split(':')[0] : undefined),
+      week: m.week || `Week ${Math.floor(index / 2) + 1}`,
+      createdDate: user?.startupProfile?.onboardedAt ? new Date(user.startupProfile.onboardedAt).toLocaleDateString() : undefined
+    };
+  }) || [];
 
   // Data sourced strictly from Firestore / AI Roadmap
   const milestones: Milestone[] = aiMilestones;
   const tasks: Task[] = aiTasks;
 
   const getTasksByStatus = (status: string) => {
-    return tasks.filter(task => task.status === status);
+    let filtered = tasks;
+    
+    // Apply UI Filters
+    if (filter !== 'all') {
+      filtered = filtered.filter(task => task.status === filter);
+    }
+    if (priorityFilter !== 'all') {
+      filtered = filtered.filter(task => task.priority === priorityFilter);
+    }
+    if (searchQuery) {
+      filtered = filtered.filter(task => 
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    return filtered.filter(task => task.status === status);
   };
 
   const getTasksByMilestone = (milestoneName: string) => {
@@ -408,190 +446,298 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
         )}
       </AnimatePresence>
 
-      {/* Main Layout: Milestones + Kanban */}
-      <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-        {/* Milestones Sidebar */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="space-y-6"
+      {/* Main Layout: Custom Animated Sidebar + View Content */}
+      <div className="flex gap-8 mt-4">
+        {/* Custom Sidebar */}
+        <div 
+          onMouseEnter={() => setIsSidebarExpanded(true)}
+          onMouseLeave={() => setIsSidebarExpanded(false)}
+          className={`relative rounded-3xl bg-[#0a0f1c]/95 backdrop-blur-3xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out flex flex-col z-40 overflow-hidden flex-shrink-0 ${isSidebarExpanded ? 'w-64' : 'w-20'}`}
+          style={{ height: 'calc(100vh - 12rem)' }}
         >
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xl font-bold flex items-center gap-3">
-              <Target className="w-6 h-6 text-cyan-400" />
-              <span>Milestones</span>
-            </h2>
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-            </motion.button>
+          {/* Header Section */}
+          <div className="p-4 flex items-center justify-between">
+            <div className={`flex items-center ${isSidebarExpanded ? 'gap-3' : 'justify-center w-full'}`}>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-lg flex items-center justify-center flex-shrink-0">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              {isSidebarExpanded && (
+                <div className="whitespace-nowrap overflow-hidden">
+                  <h3 className="font-semibold text-white text-[16px]">StartupOps</h3>
+                  <p className="text-white/70 text-[12px]">Task Management</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          {milestones.length === 0 ? (
-            <div className="p-8 rounded-2xl bg-white/5 border border-white/10 text-center">
-              <p className="text-gray-500 italic">No milestones yet. Use AI to generate some!</p>
-            </div>
-          ) : (
-            milestones.map((milestone, index) => (
-              <motion.div
-                key={milestone.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.03, y: -4, backgroundColor: "rgba(255,255,255,0.08)" }}
-                onClick={() => setSelectedMilestone(milestone)}
-                className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-2xl hover:border-cyan-500/40 transition-all cursor-pointer group shadow-xl"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="font-bold text-white group-hover:text-cyan-400 transition-colors text-base leading-tight">
-                    {milestone.title}
-                  </h3>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-400 mb-5">
-                  <Calendar className="w-4 h-4 text-cyan-400" />
-                  <span>Timeline: {milestone.due}</span>
-                </div>
-                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${milestone.progress}%` }}
-                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-600"
-                  />
-                </div>
-                <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  <span>{milestone.progress}% Done</span>
-                  <span className="text-cyan-400">View Roadmap</span>
-                </div>
-              </motion.div>
-            ))
-          )}
-        </motion.div>
-
-        {/* Kanban Board */}
-        <div className="overflow-x-auto pb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 min-w-[1200px]">
-            {columns.map((column, columnIndex) => (
-              <motion.div
-                key={column.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + columnIndex * 0.1 }}
-                className="flex flex-col min-w-[280px]"
-              >
-                {/* Column Header */}
-                <div className="flex items-center justify-between px-6 py-5 mb-4 rounded-xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg">
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(column.id)}
-                    <h3 className="font-bold text-white text-base tracking-wide">{column.title}</h3>
-                    <span className="px-3 py-1.5 rounded-full bg-white/15 text-sm font-semibold text-gray-300 min-w-[32px] text-center">
-                      {column.count}
-                    </span>
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.1, rotate: 90 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-2 rounded-lg hover:bg-white/15 transition-colors"
+          {/* Navigation Items */}
+          <div className="flex-1 px-4 py-6 flex flex-col gap-2 overflow-y-auto custom-scrollbar overflow-x-hidden">
+            {sidebarItems.map(item => {
+              const isActive = activeSidebarTab === item.id;
+              const Icon = item.icon;
+              return (
+                <div key={item.id} className="relative group">
+                  <button
+                    onClick={() => handleSidebarClick(item.id)}
+                    className={`transition-all duration-300 ${
+                      isSidebarExpanded 
+                        ? `w-full px-4 py-3 rounded-xl flex items-center gap-3 ${isActive ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 shadow-lg shadow-cyan-500/30 text-white' : 'bg-gradient-to-r from-black/20 to-black/10 hover:from-cyan-500/80 hover:to-cyan-500/60 text-gray-400 hover:text-white hover:translate-x-1'}`
+                        : `w-12 h-12 rounded-full mx-auto flex items-center justify-center hover:scale-110 hover:shadow-lg ${isActive ? 'bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-lg shadow-cyan-500/30 text-white' : 'bg-gradient-to-br from-black/20 to-black/10 hover:from-cyan-500/80 hover:to-cyan-500/60 text-gray-400 hover:text-white'}`
+                    }`}
                   >
-                    <Plus className="w-5 h-5 text-gray-300 hover:text-white transition-colors" />
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {isSidebarExpanded && (
+                      <span className="font-medium whitespace-nowrap">{item.label}</span>
+                    )}
+                  </button>
+
+                  {/* Active Indicator (Collapsed) */}
+                  {!isSidebarExpanded && isActive && (
+                    <>
+                      <div className="absolute inset-0 w-12 h-12 mx-auto rounded-full bg-cyan-500/20 animate-pulse pointer-events-none" />
+                      <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-6 bg-cyan-500 rounded-l-full" />
+                    </>
+                  )}
+
+                  {/* Active Indicator (Expanded) */}
+                  {isSidebarExpanded && isActive && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white animate-pulse" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* User Profile Section */}
+          <div className="p-4 mt-auto border-t border-white/5 flex flex-col items-center justify-center gap-3 transition-all duration-300">
+            <div className="relative group mx-auto w-12 h-12 flex-shrink-0">
+              <div 
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-lg transition-all duration-300 flex items-center justify-center text-white font-bold"
+              >
+                {user?.displayName?.charAt(0) || 'U'}
+              </div>
+            </div>
+            {isSidebarExpanded && (
+              <div className="text-center w-full overflow-hidden flex flex-col">
+                <p className="font-medium text-white text-sm truncate">{user?.displayName || 'User'}</p>
+                <p className="text-gray-400 text-xs opacity-70 truncate">{user?.email || 'Leader'}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-hidden h-[calc(100vh-12rem)]">
+          <AnimatePresence mode="wait">
+            {activeSidebarTab === 'milestones' ? (
+              <motion.div 
+                key="milestones"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="h-full space-y-4 overflow-y-auto custom-scrollbar pr-4 pb-4"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold flex items-center gap-3">
+                    <Target className="w-6 h-6 text-cyan-400" />
+                    <span>Project Milestones</span>
+                  </h2>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setNewTaskStatus('todo');
+                      setShowAddTaskModal(true);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 font-semibold hover:bg-cyan-500/30 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" /> Add Milestone
                   </motion.button>
                 </div>
 
-                {/* Task Cards */}
-                <div className="space-y-5 flex-1 min-h-[500px] p-2 rounded-2xl bg-black/20 border border-white/5 shadow-inner">
-                  {getTasksByStatus(column.id).length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-600 opacity-50">
-                      <Target className="w-12 h-12 mb-2" />
-                      <p className="text-sm font-medium">No tasks here</p>
-                    </div>
-                  ) : (
-                    getTasksByStatus(column.id).map((task, taskIndex) => (
+                {milestones.length === 0 ? (
+                  <div className="p-12 rounded-3xl bg-white/5 border border-white/10 text-center shadow-xl">
+                    <Target className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold mb-2">No Milestones Yet</h3>
+                    <p className="text-gray-500 max-w-md mx-auto">Use the AI Task Suite to generate your startup roadmap, and your milestones will appear here.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+                    {milestones.map((milestone, index) => (
                       <motion.div
-                        key={task.id}
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        key={milestone.id}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ delay: taskIndex * 0.05 }}
-                        whileHover={{ 
-                          scale: 1.02, 
-                          y: -5, 
-                          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
-                          borderColor: "rgba(6, 182, 212, 0.5)"
-                        }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          setSelectedTask(task);
-                          setEditDue(task.due || '');
-                          setEditAssignee(task.assignee || '');
-                        }}
-                        className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-3xl hover:bg-white/[0.08] transition-all cursor-pointer group relative overflow-hidden"
+                        transition={{ delay: index * 0.05 }}
+                        whileHover={{ scale: 1.02, y: -4, backgroundColor: "rgba(255,255,255,0.08)" }}
+                        onClick={() => setSelectedMilestone(milestone)}
+                        className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-2xl hover:border-cyan-500/40 transition-all cursor-pointer group shadow-xl"
                       >
-                        {/* Status Accent Bar */}
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-                          task.status === 'done' ? 'bg-green-500' :
-                          task.status === 'in-progress' ? 'bg-cyan-500' :
-                          task.status === 'review' ? 'bg-purple-500' :
-                          'bg-gray-600'
-                        }`} />
-
-                        <div className="flex items-start justify-between mb-5">
-                          <div className="flex-1">
-                            {task.method && (
-                              <div className="text-[10px] font-black uppercase text-cyan-400/80 mb-2 tracking-[0.2em]">
-                                METHOD: {task.method}
-                              </div>
-                            )}
-                            <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight text-lg tracking-tight">
-                              {task.title}
-                            </h4>
-                          </div>
-                          {task.isAI && (
-                            <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
-                              <Sparkles className="w-4 h-4 text-cyan-400" />
-                            </div>
-                          )}
+                        <div className="flex items-start justify-between mb-4">
+                          <h3 className="font-bold text-white group-hover:text-cyan-400 transition-colors text-lg leading-tight">
+                            {milestone.title}
+                          </h3>
                         </div>
-                        
-                        <p className="text-[14px] text-gray-400/80 mb-6 line-clamp-3 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
-                          {task.description || "Synthesizing execution path..."}
+                        <p className="text-gray-400 text-sm mb-5 line-clamp-2">
+                          {milestone.description || "Synthesizing execution path..."}
                         </p>
-
-                        <div className="flex flex-wrap gap-3 mb-8">
-                          <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${
-                            task.priority === 'high' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                            task.priority === 'medium' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
-                            'bg-green-500/10 text-green-400 border-green-500/20'
-                          }`}>
-                            {task.priority}
-                          </span>
-                          {task.week && (
-                            <span className="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-white/5 text-gray-400 border border-white/10">
-                              {task.week}
-                            </span>
-                          )}
+                        <div className="flex items-center gap-3 text-sm text-gray-400 mb-5">
+                          <Calendar className="w-4 h-4 text-cyan-400" />
+                          <span>Timeline: {milestone.due}</span>
                         </div>
-
-                        <div className="flex items-center justify-between pt-6 border-t border-white/5 bg-gradient-to-t from-white/[0.03] to-transparent -mx-8 -mb-8 px-8 pb-8 mt-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-[11px] font-bold text-white shadow-xl">
-                              {task.assignee?.charAt(0) || 'U'}
-                            </div>
-                            <span className="text-[12px] font-semibold text-gray-500 group-hover:text-gray-400 transition-colors uppercase tracking-tight">{task.assignee || 'Unassigned'}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-gray-500 group-hover:text-cyan-400/70 transition-colors">
-                             <Clock className="w-4 h-4" />
-                             <span className="text-[11px] font-bold uppercase tracking-widest">{task.due || 'ASAP'}</span>
-                          </div>
+                        <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden mb-3">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${milestone.progress}%` }}
+                            className="h-full bg-gradient-to-r from-cyan-500 to-purple-600"
+                          />
+                        </div>
+                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-gray-500">
+                          <span>{milestone.progress}% Complete</span>
+                          <span className="text-cyan-400 group-hover:text-cyan-300">View Details →</span>
                         </div>
                       </motion.div>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
               </motion.div>
-            ))}
-          </div>
+            ) : (
+              <motion.div 
+                key={activeSidebarTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="h-full flex flex-col"
+              >
+                {(() => {
+                  const column = columns.find(c => c.id === activeSidebarTab);
+                  if (!column) return null;
+                  const filteredTasks = getTasksByStatus(column.id);
+
+                  return (
+                    <>
+                      {/* Column Header */}
+                      <div className="flex items-center justify-between px-6 py-5 mb-6 rounded-2xl bg-gradient-to-r from-white/10 to-transparent border border-white/10 backdrop-blur-xl shadow-lg mr-4">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-xl bg-white/10 shadow-inner">
+                            {getStatusIcon(column.id)}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-white text-xl tracking-tight">{column.title} Tasks</h3>
+                            <p className="text-sm text-gray-400">{filteredTasks.length} tasks in this stage</p>
+                          </div>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setNewTaskStatus(column.id === 'completed' ? 'done' : column.id as any);
+                            setShowAddTaskModal(true);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-semibold flex items-center gap-2"
+                        >
+                          <Plus className="w-4 h-4" /> Quick Add
+                        </motion.button>
+                      </div>
+
+                      {/* Task Cards Grid */}
+                      <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 pb-12">
+                        {filteredTasks.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center py-32 text-gray-600 opacity-50 bg-white/5 rounded-3xl border border-white/5 border-dashed">
+                            <Target className="w-16 h-16 mb-4" />
+                            <p className="text-lg font-bold">No tasks found</p>
+                            <p className="text-sm text-center max-w-sm mt-2">There are currently no tasks in the "{column.title}" stage.</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+                            {filteredTasks.map((task, taskIndex) => (
+                              <motion.div
+                                key={task.id}
+                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                transition={{ delay: taskIndex * 0.05 }}
+                                whileHover={{
+                                  scale: 1.02,
+                                  y: -5,
+                                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
+                                  borderColor: "rgba(6, 182, 212, 0.5)"
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => {
+                                  setSelectedTask(task);
+                                  setEditDue(task.due || '');
+                                  setEditAssignee(task.assignee || '');
+                                }}
+                                className="p-6 rounded-2xl bg-[#0a0f1c]/80 border border-white/10 backdrop-blur-3xl hover:bg-white/[0.08] transition-all cursor-pointer group relative overflow-hidden shadow-xl"
+                              >
+                                {/* Status Accent Bar */}
+                                <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${task.status === 'done' ? 'bg-green-500' :
+                                    task.status === 'in-progress' ? 'bg-cyan-500' :
+                                      task.status === 'review' ? 'bg-purple-500' :
+                                        'bg-gray-600'
+                                  }`} />
+
+                                <div className="flex items-start justify-between mb-4">
+                                  <div className="flex-1">
+                                    {task.method && (
+                                      <div className="text-[10px] font-black uppercase text-cyan-400/80 mb-2 tracking-[0.2em]">
+                                        METHOD: {task.method}
+                                      </div>
+                                    )}
+                                    <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight text-lg tracking-tight pr-4">
+                                      {task.title}
+                                    </h4>
+                                  </div>
+                                  {task.isAI && (
+                                    <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-cyan-500/30 shadow-lg shadow-cyan-500/10 flex-shrink-0">
+                                      <Sparkles className="w-4 h-4 text-cyan-400" />
+                                    </div>
+                                  )}
+                                </div>
+
+                                <p className="text-[14px] text-gray-400/80 mb-6 line-clamp-2 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                                  {task.description || "Synthesizing execution path..."}
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                  <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border ${task.priority === 'high' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                                      task.priority === 'medium' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
+                                        'bg-green-500/10 text-green-400 border-green-500/20'
+                                    }`}>
+                                    {task.priority}
+                                  </span>
+                                  {task.week && (
+                                    <span className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-white/5 text-gray-400 border border-white/10">
+                                      {task.week}
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center justify-between pt-4 border-t border-white/5 bg-gradient-to-t from-black/20 to-transparent -mx-6 -mb-6 px-6 pb-6 mt-auto">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-[10px] font-bold text-white shadow-xl">
+                                      {task.assignee?.charAt(0) || 'U'}
+                                    </div>
+                                    <span className="text-[12px] font-semibold text-gray-500 group-hover:text-gray-400 transition-colors uppercase tracking-tight">{task.assignee || 'Unassigned'}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-gray-500 group-hover:text-cyan-400/70 transition-colors">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest">{task.due || 'ASAP'}</span>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  );
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -651,201 +797,201 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                   scrollbarColor: '#06b6d4 transparent'
                 }}
               >
-              <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
-                {/* Main Content */}
-                <div className="lg:col-span-2 space-y-4 md:space-y-6">
-                  {/* Description */}
-                  <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
-                    <h3 className="text-base md:text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
-                      Description
-                    </h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {selectedTask.description || 'No description provided yet.'}
-                    </p>
-                  </div>
-
-                  {/* Requirements */}
-                  {selectedTask.requirements && selectedTask.requirements.length > 0 && (
+                <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
+                  {/* Main Content */}
+                  <div className="lg:col-span-2 space-y-4 md:space-y-6">
+                    {/* Description */}
                     <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
-                      <h3 className="text-base md:text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
-                        Requirements
+                      <h3 className="text-base md:text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+                        Description
                       </h3>
-                      <ul className="space-y-3">
-                        {selectedTask.requirements.map((req, idx) => (
-                          <li key={idx} className="flex items-start gap-3 text-gray-300">
-                            <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold mt-0.5 flex-shrink-0">
-                              {idx + 1}
-                            </span>
-                            <span className="leading-relaxed">{req}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <p className="text-gray-300 leading-relaxed">
+                        {selectedTask.description || 'No description provided yet.'}
+                      </p>
                     </div>
-                  )}
 
-                  {/* Steps/Checklist */}
-                  {selectedTask.steps && selectedTask.steps.length > 0 && (
-                    <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
-                      <h3 className="text-base md:text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
-                        Steps to Complete
-                      </h3>
-                      <div className="space-y-3">
-                        {selectedTask.steps.map((step) => (
-                          <div key={step.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-                            <input
-                              type="checkbox"
-                              checked={step.completed}
-                              onChange={() => {}}
-                              className="w-5 h-5 rounded border-2 border-cyan-500/50 bg-transparent checked:bg-cyan-500 cursor-pointer"
-                            />
-                            <span className={`flex-1 ${step.completed ? 'text-gray-500 line-through' : 'text-gray-300'}`}>
-                              {step.text}
+                    {/* Requirements */}
+                    {selectedTask.requirements && selectedTask.requirements.length > 0 && (
+                      <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
+                        <h3 className="text-base md:text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+                          Requirements
+                        </h3>
+                        <ul className="space-y-3">
+                          {selectedTask.requirements.map((req, idx) => (
+                            <li key={idx} className="flex items-start gap-3 text-gray-300">
+                              <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold mt-0.5 flex-shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span className="leading-relaxed">{req}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Steps/Checklist */}
+                    {selectedTask.steps && selectedTask.steps.length > 0 && (
+                      <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
+                        <h3 className="text-base md:text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+                          Steps to Complete
+                        </h3>
+                        <div className="space-y-3">
+                          {selectedTask.steps.map((step) => (
+                            <div key={step.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                              <input
+                                type="checkbox"
+                                checked={step.completed}
+                                onChange={() => { }}
+                                className="w-5 h-5 rounded border-2 border-cyan-500/50 bg-transparent checked:bg-cyan-500 cursor-pointer"
+                              />
+                              <span className={`flex-1 ${step.completed ? 'text-gray-500 line-through' : 'text-gray-300'}`}>
+                                {step.text}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-white/10">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-400">Progress</span>
+                            <span className="text-cyan-400 font-medium">
+                              {selectedTask.steps.filter(s => s.completed).length} of {selectedTask.steps.length} completed
                             </span>
                           </div>
-                        ))}
-                      </div>
-                      <div className="mt-4 pt-4 border-t border-white/10">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-400">Progress</span>
-                          <span className="text-cyan-400 font-medium">
-                            {selectedTask.steps.filter(s => s.completed).length} of {selectedTask.steps.length} completed
-                          </span>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Attachments */}
-                  {selectedTask.attachments && selectedTask.attachments.length > 0 && (
-                    <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
-                      <h3 className="text-base md:text-lg font-semibold text-white mb-4">Attachments</h3>
-                      <div className="space-y-2">
-                        {selectedTask.attachments.map((file, idx) => (
-                          <a
-                            key={idx}
-                            href={file.url}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group"
-                          >
-                            <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-                              <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <span className="text-gray-300 group-hover:text-cyan-400 transition-colors">{file.name}</span>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Comments */}
-                  {selectedTask.comments && selectedTask.comments.length > 0 && (
-                    <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
-                      <h3 className="text-base md:text-lg font-semibold text-white mb-4">Comments</h3>
-                      <div className="space-y-4">
-                        {selectedTask.comments.map((comment, idx) => (
-                          <div key={idx} className="flex gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
-                              {comment.author.charAt(0)}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-white font-medium">{comment.author}</span>
-                                <span className="text-xs text-gray-500">{comment.date}</span>
+                    {/* Attachments */}
+                    {selectedTask.attachments && selectedTask.attachments.length > 0 && (
+                      <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
+                        <h3 className="text-base md:text-lg font-semibold text-white mb-4">Attachments</h3>
+                        <div className="space-y-2">
+                          {selectedTask.attachments.map((file, idx) => (
+                            <a
+                              key={idx}
+                              href={file.url}
+                              className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group"
+                            >
+                              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
                               </div>
-                              <p className="text-gray-300">{comment.text}</p>
+                              <span className="text-gray-300 group-hover:text-cyan-400 transition-colors">{file.name}</span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Comments */}
+                    {selectedTask.comments && selectedTask.comments.length > 0 && (
+                      <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
+                        <h3 className="text-base md:text-lg font-semibold text-white mb-4">Comments</h3>
+                        <div className="space-y-4">
+                          {selectedTask.comments.map((comment, idx) => (
+                            <div key={idx} className="flex gap-3">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+                                {comment.author.charAt(0)}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-white font-medium">{comment.author}</span>
+                                  <span className="text-xs text-gray-500">{comment.date}</span>
+                                </div>
+                                <p className="text-gray-300">{comment.text}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sidebar */}
+                  <div className="space-y-4 md:space-y-6">
+                    {/* Key Details */}
+                    <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="text-base md:text-lg font-semibold text-white mb-4">Details</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-2">Assignee</label>
+                          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus-within:border-cyan-500/50 transition-colors">
+                            <User className="w-4 h-4 text-gray-400" />
+                            <input
+                              type="text"
+                              value={editAssignee}
+                              onChange={(e) => setEditAssignee(e.target.value)}
+                              placeholder="Unassigned"
+                              className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:outline-none text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-2">Due Date</label>
+                          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus-within:border-cyan-500/50 transition-colors">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <input
+                              type="text"
+                              value={editDue}
+                              onChange={(e) => setEditDue(e.target.value)}
+                              placeholder="e.g. 25/03/2026 or ASAP"
+                              className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:outline-none text-sm uppercase"
+                            />
+                          </div>
+                        </div>
+                        {selectedTask.createdDate && (
+                          <div>
+                            <label className="block text-xs font-medium text-gray-400 mb-2">Created</label>
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              <span className="text-white">{selectedTask.createdDate}</span>
                             </div>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
-                  )}
-                </div>
 
-                {/* Sidebar */}
-                <div className="space-y-4 md:space-y-6">
-                  {/* Key Details */}
-                  <div className="p-4 md:p-6 rounded-xl bg-white/5 border border-white/10">
-                    <h3 className="text-base md:text-lg font-semibold text-white mb-4">Details</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-2">Assignee</label>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus-within:border-cyan-500/50 transition-colors">
-                          <User className="w-4 h-4 text-gray-400" />
-                          <input
-                            type="text"
-                            value={editAssignee}
-                            onChange={(e) => setEditAssignee(e.target.value)}
-                            placeholder="Unassigned"
-                            className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:outline-none text-sm"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-2">Due Date</label>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus-within:border-cyan-500/50 transition-colors">
-                          <Clock className="w-4 h-4 text-gray-400" />
-                          <input
-                            type="text"
-                            value={editDue}
-                            onChange={(e) => setEditDue(e.target.value)}
-                            placeholder="e.g. 25/03/2026 or ASAP"
-                            className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:outline-none text-sm uppercase"
-                          />
-                        </div>
-                      </div>
-                      {selectedTask.createdDate && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-400 mb-2">Created</label>
-                          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span className="text-white">{selectedTask.createdDate}</span>
-                          </div>
-                        </div>
-                      )}
+                    {/* Actions */}
+                    <div className="space-y-3">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleUpdateTaskDetails}
+                        className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+                      >
+                        Save Changes
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          if (selectedTask) {
+                            handleUpdateTaskStatus(selectedTask, 'done');
+                          }
+                        }}
+                        className="w-full px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-colors"
+                      >
+                        Mark as Complete
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          if (selectedTask && confirm('Are you sure you want to delete this task?')) {
+                            handleDeleteTask(selectedTask);
+                          }
+                        }}
+                        className="w-full px-6 py-3 rounded-xl bg-red-500/10 text-red-400 font-medium hover:bg-red-500/20 transition-colors"
+                      >
+                        Delete Task
+                      </motion.button>
                     </div>
                   </div>
-
-                  {/* Actions */}
-                  <div className="space-y-3">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleUpdateTaskDetails}
-                      className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
-                    >
-                      Save Changes
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        if (selectedTask) {
-                          handleUpdateTaskStatus(selectedTask, 'done');
-                        }
-                      }}
-                      className="w-full px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-colors"
-                    >
-                      Mark as Complete
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        if (selectedTask && confirm('Are you sure you want to delete this task?')) {
-                          handleDeleteTask(selectedTask);
-                        }
-                      }}
-                      className="w-full px-6 py-3 rounded-xl bg-red-500/10 text-red-400 font-medium hover:bg-red-500/20 transition-colors"
-                    >
-                      Delete Task
-                    </motion.button>
-                  </div>
                 </div>
-              </div>
               </div>
             </motion.div>
           </motion.div>
@@ -913,7 +1059,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                       <CheckCircle2 className="w-5 h-5 text-cyan-400" />
                       Tasks ({getTasksByMilestone(selectedMilestone.title).length})
                     </h3>
-                    
+
                     {getTasksByMilestone(selectedMilestone.title).length === 0 ? (
                       <div className="p-8 rounded-xl bg-white/5 border border-white/10 text-center">
                         <p className="text-gray-400">No tasks assigned to this milestone yet.</p>
@@ -940,7 +1086,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                                 {task.priority}
                               </span>
                             </div>
-                            
+
                             {task.description && (
                               <p className="text-sm text-gray-400 mb-4 line-clamp-2 leading-relaxed">{task.description}</p>
                             )}
@@ -957,12 +1103,11 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                                 )}
                               </div>
                               <div className="flex items-center gap-3">
-                                <span className={`px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs capitalize ${
-                                  task.status === 'done' ? 'text-green-400 border-green-500/30' :
-                                  task.status === 'in-progress' ? 'text-cyan-400 border-cyan-500/30' :
-                                  task.status === 'review' ? 'text-purple-400 border-purple-500/30' :
-                                  'text-gray-400'
-                                }`}>
+                                <span className={`px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs capitalize ${task.status === 'done' ? 'text-green-400 border-green-500/30' :
+                                    task.status === 'in-progress' ? 'text-cyan-400 border-cyan-500/30' :
+                                      task.status === 'review' ? 'text-purple-400 border-purple-500/30' :
+                                        'text-gray-400'
+                                  }`}>
                                   {task.status.replace('-', ' ')}
                                 </span>
                                 {task.due && (
@@ -1035,11 +1180,10 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setFilter(status.toLowerCase().replace(' ', '-'))}
-                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                        filter === status.toLowerCase().replace(' ', '-')
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${filter === status.toLowerCase().replace(' ', '-')
                           ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white'
                           : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white'
-                      }`}
+                        }`}
                     >
                       {status}
                     </motion.button>
@@ -1056,11 +1200,10 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setPriorityFilter(priority.toLowerCase())}
-                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                        priorityFilter === priority.toLowerCase()
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${priorityFilter === priority.toLowerCase()
                           ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white'
                           : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white'
-                      }`}
+                        }`}
                     >
                       {priority}
                     </motion.button>
@@ -1148,7 +1291,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
-                    <select 
+                    <select
                       value={newTaskStatus}
                       onChange={(e) => setNewTaskStatus(e.target.value as any)}
                       className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
@@ -1161,7 +1304,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">Priority</label>
-                    <select 
+                    <select
                       value={newTaskPriority}
                       onChange={(e) => setNewTaskPriority(e.target.value as any)}
                       className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
