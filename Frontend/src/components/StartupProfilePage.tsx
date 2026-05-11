@@ -44,7 +44,9 @@ export const StartupProfilePage = () => {
   const [team, setTeam] = useState<TeamMember[]>([]);
 
   const [showInviteForm, setShowInviteForm] = useState(false);
-  const [newMember, setNewMember] = useState({ email: '', role: '' });
+  const [newMember, setNewMember] = useState({ email: '', role: 'Team Member' });
+  const [inviteStatus, setInviteStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [inviteMessage, setInviteMessage] = useState('');
 
   let pitchScore = 0;
   if (user?.roadmap?.milestones) {
@@ -61,11 +63,42 @@ export const StartupProfilePage = () => {
     // Save logic here
   };
 
-  const handleInvite = () => {
+  const handleInvite = async () => {
     if (newMember.email && newMember.role) {
-      // Invite logic here
-      setNewMember({ email: '', role: '' });
-      setShowInviteForm(false);
+      setInviteStatus('loading');
+      setInviteMessage('');
+      
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/startup/invite`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ email: newMember.email, role: newMember.role })
+        });
+
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to send invite');
+        }
+
+        setInviteStatus('success');
+        setInviteMessage('Invite sent successfully!');
+        
+        setTimeout(() => {
+          setNewMember({ email: '', role: 'Team Member' });
+          setShowInviteForm(false);
+          setInviteStatus('idle');
+          setInviteMessage('');
+        }, 3000);
+        
+      } catch (err: any) {
+        setInviteStatus('error');
+        setInviteMessage(err.message || 'An error occurred');
+      }
     }
   };
 
@@ -377,23 +410,37 @@ export const StartupProfilePage = () => {
                   />
                   <input
                     type="text"
-                    placeholder="Role"
+                    placeholder="Role (e.g. CTO, Developer)"
                     value={newMember.role}
                     onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
-                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
                   />
                 </div>
+
+                {inviteMessage && (
+                  <div className={`p-3 mb-4 rounded-xl text-sm ${
+                    inviteStatus === 'success' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                  }`}>
+                    {inviteMessage}
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleInvite}
-                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all"
+                    disabled={inviteStatus === 'loading'}
+                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all disabled:opacity-50"
                   >
-                    Send Invite
+                    {inviteStatus === 'loading' ? 'Sending...' : 'Send Invite'}
                   </motion.button>
                   <button
-                    onClick={() => setShowInviteForm(false)}
+                    onClick={() => {
+                      setShowInviteForm(false);
+                      setInviteStatus('idle');
+                      setInviteMessage('');
+                    }}
                     className="px-4 py-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition-colors"
                   >
                     Cancel

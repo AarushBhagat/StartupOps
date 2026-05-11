@@ -51,7 +51,7 @@ export const Login = ({ onBack, onLogin, onSignup }: LoginProps) => {
     }
   };
 
-  const googleLogin = async () => {git p
+  const googleLogin = async () => {
     try {
       await signInWithGoogle();
       onLogin('google-user');

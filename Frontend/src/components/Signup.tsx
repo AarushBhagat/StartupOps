@@ -16,8 +16,10 @@ export const Signup = ({ onBack, onSignup, onLogin, selectedPlan }: SignupProps)
     email: '',
     startupName: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    inviteCode: ''
   });
+  const [isJoiningTeam, setIsJoiningTeam] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,9 +58,28 @@ export const Signup = ({ onBack, onSignup, onLogin, selectedPlan }: SignupProps)
     if (formData.fullName && formData.email && formData.password) {
       try {
         await signUpWithEmail(formData.email, formData.password, formData.fullName);
-        if (formData.startupName) {
-           // We could save startup Name to firestore or state, skipping for brevity as UI doesn't store in MVP
+        
+        // If joining with an invite code, call the join endpoint
+        if (isJoiningTeam && formData.inviteCode) {
+          try {
+            const { auth } = await import('../lib/firebase');
+            const token = await auth.currentUser?.getIdToken();
+            
+            await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/startup/join`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({ inviteCode: formData.inviteCode })
+            });
+          } catch (joinErr) {
+            console.error("Failed to join team automatically", joinErr);
+            // We don't block the whole signup if just the join fails, 
+            // but in a real app you'd want to handle this better.
+          }
         }
+
         onSignup(selectedPlan);
       } catch (err: any) {
         console.error("Signup failed", err);
@@ -317,24 +338,65 @@ export const Signup = ({ onBack, onSignup, onLogin, selectedPlan }: SignupProps)
               </div>
             </motion.div>
 
-            {/* Startup Name Input */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.4 }}
-            >
-              <label className="block text-sm font-medium text-gray-300 mb-2">Startup Name (Optional)</label>
-              <div className="relative group">
-                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-400 transition-colors" />
-                <input
-                  type="text"
-                  value={formData.startupName}
-                  onChange={(e) => setFormData({ ...formData, startupName: e.target.value })}
-                  placeholder="My Startup"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-cyan-500 focus:bg-white/10 transition-all"
+            {/* Join Team Toggle */}
+            <div className="flex items-center gap-3 py-2">
+              <button
+                type="button"
+                onClick={() => setIsJoiningTeam(!isJoiningTeam)}
+                className={`w-12 h-6 rounded-full transition-colors relative ${isJoiningTeam ? 'bg-cyan-500' : 'bg-white/10'}`}
+              >
+                <motion.div 
+                  animate={{ x: isJoiningTeam ? 24 : 0 }}
+                  className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-lg"
                 />
-              </div>
-            </motion.div>
+              </button>
+              <span className="text-sm text-gray-300">Joining an existing team?</span>
+            </div>
+
+            {/* Invite Code Input (Conditional) */}
+            <AnimatePresence>
+              {isJoiningTeam && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Invite Code</label>
+                  <div className="relative group">
+                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-cyan-400 group-focus-within:text-purple-400 transition-colors" />
+                    <input
+                      type="text"
+                      value={formData.inviteCode}
+                      onChange={(e) => setFormData({ ...formData, inviteCode: e.target.value.toUpperCase() })}
+                      placeholder="ABC123XY"
+                      className="w-full bg-white/5 border border-cyan-500/30 rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-cyan-500 focus:bg-white/10 transition-all font-mono tracking-widest"
+                      required={isJoiningTeam}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Startup Name Input (Optional, hide if joining team) */}
+            {!isJoiningTeam && (
+              <motion.div
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.4 }}
+              >
+                <label className="block text-sm font-medium text-gray-300 mb-2">Startup Name (Optional)</label>
+                <div className="relative group">
+                  <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-400 transition-colors" />
+                  <input
+                    type="text"
+                    value={formData.startupName}
+                    onChange={(e) => setFormData({ ...formData, startupName: e.target.value })}
+                    placeholder="My Startup"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-cyan-500 focus:bg-white/10 transition-all"
+                  />
+                </div>
+              </motion.div>
+            )}
 
             {/* Password Input */}
             <motion.div

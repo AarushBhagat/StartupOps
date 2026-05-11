@@ -10,20 +10,22 @@ import { SplitText } from './SplitText';
 import { AnimatedBackground } from './AnimatedBackground';
 import { FloatingShapes } from './FloatingShapes';
 import { Logo } from './Logo';
+import { useAuth } from '../contexts/AuthContext';
 
 interface TeamDashboardProps {
   onLogout: () => void;
   onNavigate?: (page: string) => void;
-  userName?: string;
   currentPage?: string;
 }
 
 export const TeamDashboard = ({ 
   onLogout, 
   onNavigate, 
-  userName = "Team Member",
   currentPage = 'dashboard'
 }: TeamDashboardProps) => {
+  const { user } = useAuth();
+  const userName = user?.displayName || "Team Member";
+  const userRole = user?.role || "Team Member";
   const [currentSection, setCurrentSection] = useState('dashboard');
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -40,23 +42,26 @@ export const TeamDashboard = ({
     mouseY.set(y);
   };
 
-  const myTasks = [
-    { title: 'Review Q4 financial model', status: 'in-progress', priority: 'high', due: 'Today', progress: 60 },
-    { title: 'Update market research slides', status: 'in-progress', priority: 'high', due: 'Tomorrow', progress: 30 },
-    { title: 'Complete competitor analysis', status: 'pending', priority: 'medium', due: '3 days', progress: 0 },
-    { title: 'Draft product roadmap', status: 'pending', priority: 'medium', due: '5 days', progress: 0 }
-  ];
+  // Pull tasks dynamically from user's roadmap (simulating assigned tasks)
+  const allTasks = user?.roadmap?.milestones || [];
+  
+  const myTasks = allTasks.filter((m: any) => m.status !== 'completed').map((m: any) => ({
+    title: m.title,
+    status: m.status || 'pending',
+    priority: m.priority || 'medium',
+    due: m.due || 'Upcoming',
+    progress: m.status === 'in-progress' ? 50 : 0
+  }));
 
-  const completedTasks = [
-    { title: 'Set up analytics dashboard', completedDate: 'Today' },
-    { title: 'Customer interview #5', completedDate: 'Yesterday' },
-    { title: 'Draft blog post for launch', completedDate: '2 days ago' }
-  ];
+  const completedTasks = allTasks.filter((m: any) => m.status === 'completed').map((m: any) => ({
+    title: m.title,
+    completedDate: 'Recently'
+  }));
 
   const stats = [
-    { label: 'Assigned Tasks', value: '8', color: 'from-cyan-500 to-blue-600' },
-    { label: 'Completed', value: '24', color: 'from-green-500 to-emerald-600' },
-    { label: 'In Progress', value: '4', color: 'from-orange-500 to-red-600' }
+    { label: 'Assigned Tasks', value: myTasks.length.toString(), color: 'from-cyan-500 to-blue-600' },
+    { label: 'Completed', value: completedTasks.length.toString(), color: 'from-green-500 to-emerald-600' },
+    { label: 'In Progress', value: myTasks.filter((t: any) => t.status === 'in-progress').length.toString(), color: 'from-orange-500 to-red-600' }
   ];
 
   const getStatusIcon = (status: string) => {
@@ -143,22 +148,32 @@ export const TeamDashboard = ({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="mb-8 md:mb-12"
+          className="mb-8 md:mb-12 flex items-center justify-between"
         >
-          <SplitText
-            text={`Welcome back, ${userName.split(' ')[0]}! 👋`}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-4 tracking-tighter"
-            delay={0}
-            duration={0.05}
-          />
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-lg md:text-xl text-gray-400"
+          <div>
+            <SplitText
+              text={`Welcome back, ${userName.split(' ')[0]}! 👋`}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-4 tracking-tighter"
+              delay={0}
+              duration={0.05}
+            />
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-lg md:text-xl text-gray-400"
+            >
+              Here's what you're working on today.
+            </motion.p>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6 }}
+            className="hidden md:block px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-purple-600/10 border border-cyan-500/30 text-cyan-400 font-medium"
           >
-            Here's what you're working on today.
-          </motion.p>
+            Role: {userRole}
+          </motion.div>
         </motion.div>
 
         {/* Stats Grid */}
@@ -199,7 +214,7 @@ export const TeamDashboard = ({
           >
             <h2 className="text-xl md:text-2xl font-bold mb-6">My Active Tasks</h2>
             <div className="space-y-4">
-              {myTasks.map((task, index) => (
+              {myTasks.length > 0 ? myTasks.map((task, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 10 }}
@@ -247,7 +262,11 @@ export const TeamDashboard = ({
                     </div>
                   )}
                 </motion.div>
-              ))}
+              )) : (
+                <div className="text-gray-400 text-center py-8">
+                  You have no pending tasks. Great job!
+                </div>
+              )}
             </div>
             <button 
               onClick={() => setCurrentSection('tasks')}
@@ -268,7 +287,7 @@ export const TeamDashboard = ({
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
               <h2 className="text-lg md:text-xl font-bold mb-4">Recently Completed</h2>
               <div className="space-y-3">
-                {completedTasks.map((task, index) => (
+                {completedTasks.length > 0 ? completedTasks.map((task, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: 20 }}
@@ -282,7 +301,9 @@ export const TeamDashboard = ({
                       <p className="text-xs text-gray-400">{task.completedDate}</p>
                     </div>
                   </motion.div>
-                ))}
+                )) : (
+                  <div className="text-gray-400 text-sm py-4 text-center">No recently completed tasks.</div>
+                )}
               </div>
             </div>
 

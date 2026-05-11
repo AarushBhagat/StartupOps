@@ -9,8 +9,13 @@ import {
   Upload,
   Save,
   Trash2,
-  Check
+  Check,
+  Mail,
+  Loader2,
+  X
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { auth } from '../lib/firebase';
 
 type TabId = 'account' | 'workspace' | 'notifications' | 'billing';
 
@@ -23,6 +28,59 @@ export const SettingsPage = () => {
     newPassword: '',
     confirmPassword: ''
   });
+
+  // Invite states
+  const { user } = useAuth();
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState('Team Member');
+  const [inviteStatus, setInviteStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [inviteMessage, setInviteMessage] = useState('');
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail) return;
+
+    setInviteStatus('loading');
+    setInviteMessage('');
+    setPreviewUrl('');
+    
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/startup/invite`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ email: inviteEmail, role: inviteRole })
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to send invite');
+      }
+
+      setInviteStatus('success');
+      setInviteMessage('Invite sent successfully!');
+      if (data.previewUrl) {
+        setPreviewUrl(data.previewUrl);
+      }
+
+      setTimeout(() => {
+        setIsInviteModalOpen(false);
+        setInviteStatus('idle');
+        setInviteEmail('');
+        setInviteRole('Team Member');
+      }, 3000);
+
+    } catch (err: any) {
+      setInviteStatus('error');
+      setInviteMessage(err.message || 'An error occurred');
+    }
+  };
 
   const [notifications, setNotifications] = useState({
     taskAssigned: true,
@@ -263,6 +321,7 @@ export const SettingsPage = () => {
               </div>
 
               <motion.button
+                onClick={() => setIsInviteModalOpen(true)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full px-6 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-colors font-medium"
@@ -417,6 +476,97 @@ export const SettingsPage = () => {
           </div>
         )}
       </motion.div>
+
+      {/* Invite Modal */}
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="w-full max-w-md bg-[#0a0f1c] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-white">Invite Team Member</h3>
+                <button
+                  onClick={() => setIsInviteModalOpen(false)}
+                  className="p-2 rounded-lg hover:bg-white/5 text-gray-400 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleInvite} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="email"
+                      required
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                      placeholder="colleague@startup.com"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Role</label>
+                  <input
+                    type="text"
+                    value={inviteRole}
+                    onChange={(e) => setInviteRole(e.target.value)}
+                    placeholder="e.g. CTO, Developer, Intern"
+                    className="w-full px-4 py-3 rounded-xl bg-[#0f172a] border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  />
+                </div>
+
+                {inviteMessage && (
+                  <div className={`p-3 rounded-xl text-sm ${
+                    inviteStatus === 'success' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                  }`}>
+                    {inviteMessage}
+                    {previewUrl && (
+                      <div className="mt-2">
+                        <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="underline text-cyan-400">
+                          View Email Preview (Dev Only)
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="pt-4 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsInviteModalOpen(false)}
+                    className="flex-1 px-4 py-3 rounded-xl bg-white/5 text-white font-medium hover:bg-white/10 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={inviteStatus === 'loading' || !inviteEmail}
+                    className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium hover:from-cyan-400 hover:to-purple-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {inviteStatus === 'loading' ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      'Send Invite'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

@@ -76,7 +76,8 @@ export default function App() {
 
       // Dynamic logic based on real UserProfile from Firestore
       if (user.startupProfile) {
-        setUserRole('leader'); // Currently everyone who creates a profile is a leader
+        const role = user.role === 'team' ? 'team' : 'leader';
+        setUserRole(role);
         setHasStartupInfo(true);
         setStartupInfo(user.startupProfile);
         setNeedsOnboarding(false);
