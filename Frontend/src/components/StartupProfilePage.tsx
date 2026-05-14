@@ -237,7 +237,7 @@ export const StartupProfilePage = () => {
                       className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                     >
                       {industries.map(ind => (
-                        <option key={ind} value={ind}>{ind}</option>
+                        <option className="bg-[#02040a] text-white" key={ind} value={ind}>{ind}</option>
                       ))}
                     </select>
                   ) : (
@@ -255,7 +255,7 @@ export const StartupProfilePage = () => {
                       className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
                     >
                       {stages.map(stage => (
-                        <option key={stage} value={stage}>{stage}</option>
+                        <option className="bg-[#02040a] text-white" key={stage} value={stage}>{stage}</option>
                       ))}
                     </select>
                   ) : (

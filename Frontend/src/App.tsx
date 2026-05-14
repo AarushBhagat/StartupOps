@@ -24,6 +24,8 @@ import { SettingsPage } from './components/SettingsPage';
 import { CommandPalette } from './components/CommandPalette';
 import { useAuth } from './contexts/AuthContext';
 import NeuralBackground from './components/NeuralBackground';
+import { WelcomeChoice } from './components/WelcomeChoice';
+import { InProcess } from './components/InProcess';
 
 type UserRole = 'leader' | 'team' | null;
 
@@ -83,16 +85,16 @@ export default function App() {
         setStartupInfo(user.startupProfile);
         setNeedsOnboarding(false);
         // If they are on auth pages, home, or onboarding, redirect to dashboard
-        if (['home', 'login', 'signup', 'onboarding'].includes(currentPage)) {
-          setCurrentPage('dashboard');
+        if (['home', 'login', 'signup', 'onboarding', 'welcome-choice'].includes(currentPage)) {
+          setCurrentPage(role === 'team' ? 'in-process' : 'dashboard');
         }
       } else {
-        setUserRole('leader');
+        setUserRole(null);
         setHasStartupInfo(false);
         setNeedsOnboarding(true);
-        // Only redirect to onboarding if coming from auth pages
+        // Only redirect to welcome-choice if coming from auth pages
         if (['home', 'login', 'signup'].includes(currentPage)) {
-          setCurrentPage('onboarding');
+          setCurrentPage('welcome-choice');
         }
       }
     } else {
@@ -361,8 +363,30 @@ export default function App() {
           </motion.div>
         )}
 
+        {/* Welcome Choice */}
+        {currentPage === 'welcome-choice' && isAuthenticated && !hasStartupInfo && (
+          <motion.div
+            key="welcome-choice"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          >
+            <WelcomeChoice
+              onChooseCreate={() => {
+                setUserRole('leader');
+                setCurrentPage('onboarding');
+              }}
+              onChooseJoin={() => {
+                // The auth effect will catch the DB change and route them automatically,
+                // but we can set a temporary loading state here if needed.
+              }}
+            />
+          </motion.div>
+        )}
+
         {/* Onboarding */}
-        {currentPage === 'onboarding' && isAuthenticated && userRole === 'leader' && (
+        {currentPage === 'onboarding' && isAuthenticated && (userRole === 'leader' || !userRole) && (
           <motion.div
             key="onboarding"
             initial={{ opacity: 0, scale: 0.95 }}
@@ -408,6 +432,24 @@ export default function App() {
               onNavigate={setCurrentPage}
               userName={getUserName()}
               currentPage={currentPage}
+            />
+          </motion.div>
+        )}
+
+        {/* In Process - Team Member */}
+        {currentPage === 'in-process' && isAuthenticated && userRole === 'team' && (
+          <motion.div
+            key="in-process"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <InProcess
+              onLogout={handleLogout}
+              onNavigate={setCurrentPage}
+              userName={getUserName()}
+              startupName={startupInfo?.startupName || 'Your Startup'}
             />
           </motion.div>
         )}

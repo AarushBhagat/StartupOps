@@ -91,7 +91,7 @@ export const sendInvite = async (req: Request, res: Response) => {
                 <h3 style="font-size: 24px; color: #00bcd4; margin: 0; letter-spacing: 2px;">${inviteCode}</h3>
               </div>
               <p style="font-size: 16px; color: #555;">
-                Go to <a href="http://localhost:5173/signup" style="color: #00bcd4;">StartupOps Setup</a> and enter this code during onboarding to link your account to the team.
+                Go to <a href="${process.env.FRONTEND_URL || 'https://startupops-omega.vercel.app'}/login" style="color: #00bcd4;">StartupOps Login</a> and enter this code after logging in to link your account to the team.
               </p>
             </div>
           `,
@@ -122,7 +122,7 @@ export const sendInvite = async (req: Request, res: Response) => {
             <h3 style="font-size: 24px; color: #00bcd4; margin: 0; letter-spacing: 2px;">${inviteCode}</h3>
           </div>
           <p style="font-size: 16px; color: #555;">
-            Go to <a href="http://localhost:5173/signup" style="color: #00bcd4;">StartupOps Setup</a> and enter this code during onboarding to link your account to the team.
+            Go to <a href="${process.env.FRONTEND_URL || 'https://startupops-omega.vercel.app'}/login" style="color: #00bcd4;">StartupOps Login</a> and enter this code after logging in to link your account to the team.
           </p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
           <p style="font-size: 12px; color: #999; text-align: center;">

@@ -593,7 +593,7 @@ Seeking seed funding to expand our team, scale marketing, and enhance our produc
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-4xl my-8 rounded-2xl bg-transparent border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[70vh]"
+              className="w-full max-w-4xl my-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[70vh]"
             >
               {/* Header - Fixed */}
               <div className="flex items-start justify-between p-6 md:p-8 gap-4 border-b border-white/10 flex-shrink-0">
