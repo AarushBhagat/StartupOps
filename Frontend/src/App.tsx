@@ -23,6 +23,7 @@ import { StartupProfilePage } from './components/StartupProfilePage';
 import { SettingsPage } from './components/SettingsPage';
 import { CommandPalette } from './components/CommandPalette';
 import { useAuth } from './contexts/AuthContext';
+import NeuralBackground from './components/NeuralBackground';
 
 type UserRole = 'leader' | 'team' | null;
 
@@ -227,11 +228,12 @@ export default function App() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-[#02040a] flex items-center justify-center text-white">Loading...</div>;
+    return <div className="min-h-screen bg-transparent flex items-center justify-center text-white">Loading...</div>;
   }
 
   return (
-    <div className="bg-[#02040a] min-h-screen text-white selection:bg-cyan-500/30 selection:text-cyan-100 font-sans">
+    <NeuralBackground>
+    <div className="min-h-screen text-white selection:bg-cyan-500/30 selection:text-cyan-100 font-sans">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Manrope:wght@200..800&family=Space+Grotesk:wght@300..700&display=swap');
         
@@ -266,7 +268,7 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="relative z-10 bg-[#02040a] mb-[80vh] shadow-[0_50px_100px_rgba(0,0,0,1)]">
+            <div className="relative z-10 bg-transparent mb-[80vh] shadow-[0_50px_100px_rgba(0,0,0,1)]">
               <div id="home">
                 <Hero onGetStarted={() => setCurrentPage('signup')} />
               </div>
@@ -554,5 +556,6 @@ export default function App() {
         />
       )}
     </div>
+    </NeuralBackground>
   );
 }

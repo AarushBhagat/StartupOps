@@ -29,7 +29,7 @@ export const Features = () => {
   // For this demo, we'll use a horizontal overflow container with nice styling
 
   return (
-    <section className="py-32 bg-[#02040a] relative overflow-hidden">
+    <section className="py-32 bg-transparent relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-[#02040a] to-[#02040a] pointer-events-none" />
       
       <div className="container mx-auto px-6 relative z-10">

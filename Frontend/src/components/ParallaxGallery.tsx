@@ -42,7 +42,7 @@ export const ParallaxGallery = () => {
   const y3 = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   return (
-    <section ref={ref} className="py-32 bg-[#02040a] relative overflow-hidden">
+    <section ref={ref} className="py-32 bg-transparent relative overflow-hidden">
       <div className="container mx-auto px-6">
          <div className="mb-24 flex flex-col md:flex-row justify-between items-end gap-8">
             <h2 className="text-5xl md:text-7xl font-bold text-white leading-none">

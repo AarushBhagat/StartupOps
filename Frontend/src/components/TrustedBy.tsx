@@ -7,7 +7,7 @@ const logos = [
 
 export const TrustedBy = () => {
   return (
-    <section className="relative z-20 bg-[#02040a] py-24">
+    <section className="relative z-20 bg-transparent py-24">
       <div className="container mx-auto px-6">
         {/* Isolated Box Container */}
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-sm overflow-hidden relative">

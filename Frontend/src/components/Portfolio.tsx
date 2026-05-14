@@ -5,7 +5,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 
 export const Portfolio = () => {
   return (
-    <section className="py-32 bg-[#02040a] relative overflow-hidden">
+    <section className="py-32 bg-transparent relative overflow-hidden">
       {/* Background radial gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_var(--tw-gradient-stops))] from-blue-900/20 to-transparent" />
 

@@ -74,7 +74,7 @@ export const DashboardLayout = ({
     <motion.div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen bg-[#02040a] text-white relative overflow-hidden"
+      className="min-h-screen bg-transparent text-white relative overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -155,7 +155,7 @@ export const DashboardLayout = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="md:hidden fixed inset-0 z-40 bg-[#02040a]/95 backdrop-blur-xl pt-20"
+            className="md:hidden fixed inset-0 z-40 bg-transparent/95 backdrop-blur-xl pt-20"
             onClick={() => setMobileMenuOpen(false)}
           >
             <nav className="p-6 space-y-2">

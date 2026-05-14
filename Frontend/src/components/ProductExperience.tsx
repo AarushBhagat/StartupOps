@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 
 export const ProductExperience = () => {
   return (
-    <section className="py-32 bg-[#02040a] relative">
+    <section className="py-32 bg-transparent relative">
       <div className="container mx-auto px-6">
         <div className="bg-gradient-to-b from-white/5 to-transparent rounded-3xl p-1 border border-white/10">
           <div className="bg-[#050a14] rounded-[22px] overflow-hidden relative min-h-[600px] flex items-center justify-center">

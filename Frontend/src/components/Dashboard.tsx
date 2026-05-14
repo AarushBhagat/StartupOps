@@ -52,7 +52,7 @@ export const Dashboard = ({ onLogout, onNavigate, userName = "John Doe" }: Dashb
   };
 
   return (
-    <div className="min-h-screen bg-[#02040a] text-white relative overflow-hidden">
+    <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
       {/* Animated Background - Same as other pages */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-900/30 rounded-full blur-[120px] animate-pulse" />

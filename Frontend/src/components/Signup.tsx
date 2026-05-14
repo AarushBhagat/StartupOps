@@ -102,7 +102,7 @@ export const Signup = ({ onBack, onSignup, onLogin, selectedPlan }: SignupProps)
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen bg-[#02040a] text-white flex items-center justify-center px-6 py-20 relative overflow-hidden"
+      className="min-h-screen bg-transparent text-white flex items-center justify-center px-6 py-20 relative overflow-hidden"
     >
       {/* Animated Background with Parallax */}
       <motion.div 

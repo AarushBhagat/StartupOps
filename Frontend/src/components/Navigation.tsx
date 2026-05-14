@@ -42,7 +42,7 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || currentPage !== 'home' ? 'py-4 bg-[#02040a]/90 backdrop-blur-xl border-b border-white/5' : 'py-8 bg-transparent'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || currentPage !== 'home' ? 'py-4 bg-transparent/90 backdrop-blur-xl border-b border-white/5' : 'py-8 bg-transparent'}`}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
           <button 
@@ -105,7 +105,7 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
-            className="fixed inset-0 z-[60] bg-[#02040a] p-6 flex flex-col"
+            className="fixed inset-0 z-[60] bg-transparent p-6 flex flex-col"
           >
             <div className="flex justify-between items-center mb-12">
               <span className="text-xl font-bold text-white">StartupOps</span>

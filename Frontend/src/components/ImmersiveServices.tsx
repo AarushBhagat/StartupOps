@@ -37,7 +37,7 @@ export const ImmersiveServices = () => {
   const [activeService, setActiveService] = useState(0);
 
   return (
-    <section className="relative min-h-screen bg-[#02040a] text-white py-32 overflow-hidden flex flex-col justify-center">
+    <section className="relative min-h-screen bg-transparent text-white py-32 overflow-hidden flex flex-col justify-center">
       <div className="container mx-auto px-6 relative z-20">
         <div className="flex flex-col lg:flex-row gap-20 items-center">
           

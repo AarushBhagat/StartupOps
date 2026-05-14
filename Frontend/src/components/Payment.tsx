@@ -51,7 +51,7 @@ export const Payment = ({ onBack, onComplete, selectedPlan }: PaymentProps) => {
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen bg-[#02040a] text-white px-6 py-20 relative overflow-hidden"
+      className="min-h-screen bg-transparent text-white px-6 py-20 relative overflow-hidden"
     >
       {/* Animated Background with Parallax */}
       <AnimatedBackground mouseX={mouseX} mouseY={mouseY} />

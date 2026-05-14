@@ -52,7 +52,7 @@ const CaseSection = ({ title, description, image, reversed = false }) => {
 
 export const UseCases = () => {
   return (
-    <section className="py-32 bg-[#02040a] relative overflow-hidden">
+    <section className="py-32 bg-transparent relative overflow-hidden">
         {/* Background Gradients */}
         <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[128px] pointer-events-none" />
         <div className="absolute bottom-1/3 left-0 w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[128px] pointer-events-none" />

@@ -16,7 +16,7 @@ export const ImpossibleFuture = () => {
   const y2 = useTransform(scrollYProgress, [0, 1], [400, -400]);
 
   return (
-    <section ref={targetRef} className="relative py-48 bg-[#02040a] overflow-hidden">
+    <section ref={targetRef} className="relative py-48 bg-transparent overflow-hidden">
       
       {/* Background Gradients */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-900/10 rounded-full blur-[100px]" />

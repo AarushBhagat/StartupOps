@@ -447,7 +447,7 @@ export const AnalyticsPage = () => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md p-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl"
+              className="w-full max-w-md p-8 rounded-2xl bg-transparent border border-white/10 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">Custom Date Range</h2>

@@ -87,7 +87,7 @@ export const PlanSelection = ({ onBack, onSelectPlan }: PlanSelectionProps) => {
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen bg-[#02040a] text-white py-20 px-6 relative overflow-hidden"
+      className="min-h-screen bg-transparent text-white py-20 px-6 relative overflow-hidden"
     >
       {/* Animated Background with Parallax */}
       <AnimatedBackground mouseX={mouseX} mouseY={mouseY} />

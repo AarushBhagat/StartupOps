@@ -42,7 +42,7 @@ const CaseStudy = ({ title, category, description, image, index }) => {
 
 export const RefinedPortfolio = () => {
   return (
-    <section className="bg-[#02040a] py-32 relative z-20">
+    <section className="bg-transparent py-32 relative z-20">
       <div className="container mx-auto px-6">
          <div className="mb-32 text-center">
             <h2 className="text-sm font-bold text-gray-500 uppercase tracking-[0.2em] mb-4">Success Stories</h2>

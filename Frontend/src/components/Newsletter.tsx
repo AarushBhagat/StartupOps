@@ -3,7 +3,7 @@ import { Mail, ArrowRight } from 'lucide-react';
 
 export const Newsletter = () => {
   return (
-    <section className="py-20 bg-[#02040a]">
+    <section className="py-20 bg-transparent">
        <div className="container mx-auto px-6">
           <div className="bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-white/10 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
              

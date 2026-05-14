@@ -49,7 +49,7 @@ const ServiceCard = ({ icon: Icon, title, description, index, color }) => {
 
 export const ServicesStack = () => {
   return (
-    <section className="bg-[#02040a] py-20 relative">
+    <section className="bg-transparent py-20 relative">
        <div className="container mx-auto px-6 mb-20">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}

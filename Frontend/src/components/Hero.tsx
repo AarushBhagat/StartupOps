@@ -38,7 +38,7 @@ export const Hero = ({ onGetStarted }: HeroProps) => {
       className="relative h-[110vh] w-full overflow-hidden flex flex-col items-center justify-center perspective-1000"
     >
       {/* Dynamic Background */}
-      <div className="absolute inset-0 z-0 bg-[#02040a]">
+      <div className="absolute inset-0 z-0 bg-transparent">
          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-900/30 rounded-full blur-[120px] animate-pulse" />
          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-cyan-900/30 rounded-full blur-[120px] animate-pulse delay-1000" />
          <motion.div 

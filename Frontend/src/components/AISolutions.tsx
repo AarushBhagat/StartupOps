@@ -41,7 +41,7 @@ const SolutionCard = ({ icon: Icon, title, subtitle, description, delay }) => {
 
 export const AISolutions = () => {
   return (
-    <section className="py-32 bg-[#02040a] relative">
+    <section className="py-32 bg-transparent relative">
       <div className="container mx-auto px-6">
         <div className="text-center mb-20">
           <motion.span 

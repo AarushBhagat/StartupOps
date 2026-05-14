@@ -79,7 +79,7 @@ export const TeamDashboard = ({
     <motion.div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen bg-[#02040a] text-white relative overflow-hidden"
+      className="min-h-screen bg-transparent text-white relative overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

@@ -23,7 +23,7 @@ const TestimonialCard = ({ quote, author, role, image }) => (
 
 export const Testimonials = () => {
   return (
-    <section className="py-24 bg-[#02040a] border-t border-white/5">
+    <section className="py-24 bg-transparent border-t border-white/5">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
            <span className="text-cyan-500 uppercase tracking-widest text-xs font-bold mb-3 block">Testimonials</span>

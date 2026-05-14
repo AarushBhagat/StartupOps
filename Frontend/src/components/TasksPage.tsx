@@ -756,7 +756,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-6xl my-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[85vh]"
+              className="w-full max-w-6xl my-8 rounded-2xl bg-transparent border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[85vh]"
             >
               {/* Fixed Header */}
               <div className="flex items-start justify-between p-4 md:p-8 pb-4 gap-4 border-b border-white/10 flex-shrink-0">
@@ -1013,7 +1013,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-4xl my-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[85vh]"
+              className="w-full max-w-4xl my-8 rounded-2xl bg-transparent border border-white/10 backdrop-blur-xl shadow-2xl flex flex-col max-h-[85vh]"
             >
               {/* Fixed Header */}
               <div className="flex items-start justify-between p-4 md:p-8 pb-4 gap-4 border-b border-white/10 flex-shrink-0">
@@ -1159,7 +1159,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md p-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl space-y-6"
+              className="w-full max-w-md p-8 rounded-2xl bg-transparent border border-white/10 backdrop-blur-xl space-y-6"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">Filter Tasks</h2>
@@ -1253,7 +1253,7 @@ export const TasksPage = ({ selectedTemplates = [] }: TasksPageProps) => {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl p-8 rounded-2xl bg-[#02040a] border border-white/10 backdrop-blur-xl"
+              className="w-full max-w-2xl p-8 rounded-2xl bg-transparent border border-white/10 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">Create New Task</h2>

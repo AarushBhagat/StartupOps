@@ -11,7 +11,7 @@ export const HorizontalScroll = () => {
   const x = useTransform(scrollYProgress, [0, 1], ["1%", "-75%"]);
 
   return (
-    <section ref={targetRef} className="relative h-[300vh] bg-[#02040a]">
+    <section ref={targetRef} className="relative h-[300vh] bg-transparent">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <motion.div style={{ x }} className="flex gap-20 px-20">
            {/* Intro Panel */}

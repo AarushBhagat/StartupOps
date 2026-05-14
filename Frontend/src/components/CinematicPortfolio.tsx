@@ -47,7 +47,7 @@ const Project = ({ title, category, year, image, index }) => {
 
 export const CinematicPortfolio = () => {
   return (
-    <section className="bg-[#02040a] py-32">
+    <section className="bg-transparent py-32">
       <div className="container mx-auto px-6 mb-20">
          <h2 className="text-xl md:text-2xl text-gray-400 font-light border-b border-gray-800 pb-8">
             Selected Works (2023-2024)
