@@ -82,12 +82,6 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
                 >
                   Sign In
                 </button>
-                <button 
-                  onClick={onGetStarted}
-                  className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white text-sm font-medium hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all duration-300 active:scale-95"
-                >
-                  Get Started
-                </button>
               </>
             )}
           </div>
@@ -135,12 +129,6 @@ export const Navigation = ({ onNavigate, onGetStarted, currentPage, setCurrentPa
                     className="w-full py-4 rounded-full bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white font-bold transition-all duration-300 active:scale-95"
                   >
                     Sign In
-                  </button>
-                  <button 
-                    onClick={() => { setIsMobileMenuOpen(false); onGetStarted(); }}
-                    className="w-full py-4 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all duration-300 active:scale-95"
-                  >
-                    Get Started
                   </button>
                 </>
               )}

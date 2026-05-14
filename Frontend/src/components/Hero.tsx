@@ -81,17 +81,6 @@ export const Hero = ({ onGetStarted }: HeroProps) => {
           Your AI-powered co-pilot from idea to funding.
         </motion.p>
 
-        {onGetStarted && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            onClick={onGetStarted}
-            className="mt-8 text-white text-lg underline decoration-1 underline-offset-4 hover:font-bold hover:decoration-2 transition-all duration-200"
-          >
-            Start Building
-          </motion.button>
-        )}
       </motion.div>
 
       {/* Floating 3D Cards */}
