@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   User, 
-  signInWithPopup, 
+  signInWithPopup,
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
@@ -17,6 +17,7 @@ export interface UserProfile {
   displayName: string | null;
   photoURL: string | null;
   createdAt: string;
+  role?: 'leader' | 'team';
   startupProfile?: {
     startupName: string;
     industry: string;

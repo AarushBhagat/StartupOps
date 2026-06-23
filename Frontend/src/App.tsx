@@ -26,6 +26,8 @@ import { useAuth } from './contexts/AuthContext';
 import NeuralBackground from './components/NeuralBackground';
 import { WelcomeChoice } from './components/WelcomeChoice';
 import { InProcess } from './components/InProcess';
+import { auth, db } from './lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 type UserRole = 'leader' | 'team' | null;
 
@@ -79,14 +81,14 @@ export default function App() {
 
       // Dynamic logic based on real UserProfile from Firestore
       if (user.startupProfile) {
-        const role = user.role === 'team' ? 'team' : 'leader';
-        setUserRole(role);
+        const isTeamMember = Boolean((user as { startupId?: string }).startupId);
+        setUserRole(isTeamMember ? 'team' : 'leader');
         setHasStartupInfo(true);
         setStartupInfo(user.startupProfile);
         setNeedsOnboarding(false);
         // If they are on auth pages, home, or onboarding, redirect to dashboard
         if (['home', 'login', 'signup', 'onboarding', 'welcome-choice'].includes(currentPage)) {
-          setCurrentPage(role === 'team' ? 'in-process' : 'dashboard');
+          setCurrentPage(isTeamMember ? 'in-process' : 'dashboard');
         }
       } else {
         setUserRole(null);
@@ -157,8 +159,40 @@ export default function App() {
   };
 
   // Handle login (now handled by useEffect syncing with Firebase)
-  const handleLogin = (email: string) => {
-    // Left for child component backward compatibility
+  const handleLogin = async (_email: string) => {
+    const waitForAuthUser = async () => {
+      for (let attempt = 0; attempt < 20; attempt += 1) {
+        if (auth.currentUser) {
+          return auth.currentUser;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      return null;
+    };
+
+    const currentFirebaseUser = await waitForAuthUser();
+
+    if (!currentFirebaseUser) {
+      return;
+    }
+
+    const userRef = doc(db, 'users', currentFirebaseUser.uid);
+    const userDoc = await getDoc(userRef);
+    const profile = userDoc.data() as any;
+
+    if (profile?.startupId) {
+      setCurrentPage('in-process');
+      return;
+    }
+
+    if (profile?.startupProfile) {
+      setCurrentPage('dashboard');
+      return;
+    }
+
+    setCurrentPage('welcome-choice');
   };
 
   // Handle onboarding completion
@@ -291,7 +325,7 @@ export default function App() {
               </div>
             </div>
 
-            <RevealFooter onGetStarted={() => setCurrentPage('signup')} />
+            <RevealFooter onGetStarted={() => setCurrentPage('login')} />
           </motion.div>
         )}
 

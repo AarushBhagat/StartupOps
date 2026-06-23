@@ -91,7 +91,6 @@ export const Signup = ({ onBack, onSignup, onLogin, selectedPlan }: SignupProps)
   const googleSignup = async () => {
     try {
       await signInWithGoogle();
-      onSignup(selectedPlan);
     } catch (err: any) {
       console.error('Google Signup Failed:', err);
       setError(err.message || 'Failed to signup with Google');
