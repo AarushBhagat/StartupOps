@@ -135,9 +135,12 @@ export const sendInvite = async (req: Request, res: Response) => {
     console.log("Message sent: %s", info.messageId);
     const previewUrl = nodemailer.getTestMessageUrl(info);
 
-    return res.status(200).json({ 
-      message: 'Invite sent successfully (Test Mode)',
-      previewUrl
+    if (previewUrl && process.env.NODE_ENV !== 'production') {
+      console.log('Ethereal preview URL:', previewUrl);
+    }
+
+    return res.status(200).json({
+      message: 'Invite sent successfully (Test Mode)'
     });
 
   } catch (error) {
@@ -179,10 +182,21 @@ export const joinWithInvite = async (req: Request, res: Response) => {
     const founderDoc = await founderRef.get();
     const founderData = founderDoc.data();
 
+    const founderStartupProfile = founderData?.startupProfile;
+    const safeStartupProfile = founderStartupProfile
+      ? {
+          startupName: founderStartupProfile.startupName,
+          industry: founderStartupProfile.industry,
+          stage: founderStartupProfile.stage,
+          selectedTemplates: founderStartupProfile.selectedTemplates || [],
+          onboardedAt: founderStartupProfile.onboardedAt
+        }
+      : { startupName: inviteData.startupName };
+
     await userRef.set({
       role: 'team',
       startupId: inviteData.startupId,
-      startupProfile: founderData?.startupProfile || { startupName: inviteData.startupName },
+      startupProfile: safeStartupProfile,
       roadmap: founderData?.roadmap || null,
       joinedAt: new Date().toISOString()
     }, { merge: true });
