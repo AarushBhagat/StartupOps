@@ -29,10 +29,10 @@ export const AnalyticsPage = () => {
   const [customEndDate, setCustomEndDate] = useState('');
 
   const investorMetrics = [
-    { label: 'MRR', value: '$0', change: '0%', trend: 'neutral', icon: DollarSign, color: 'from-green-500 to-emerald-600' },
+    { label: 'MRR', value: '₹0', change: '0%', trend: 'neutral', icon: DollarSign, color: 'from-green-500 to-emerald-600' },
     { label: 'Active Users', value: '0', change: '0%', trend: 'neutral', icon: Users, color: 'from-cyan-500 to-blue-600' },
     { label: 'MoM Growth', value: '0%', change: '0%', trend: 'neutral', icon: TrendingUp, color: 'from-purple-500 to-pink-600' },
-    { label: 'Burn Rate', value: '$0/mo', change: '0%', trend: 'neutral', icon: DollarSign, color: 'from-orange-500 to-red-600' },
+    { label: 'Burn Rate', value: '₹0/mo', change: '0%', trend: 'neutral', icon: DollarSign, color: 'from-orange-500 to-red-600' },
   ];
 
   const taskData: any[] = [];
