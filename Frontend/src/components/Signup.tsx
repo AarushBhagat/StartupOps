@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform, useSpring } from 'motion/react';
+import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Mail, Lock, User, Eye, EyeOff, Building2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
