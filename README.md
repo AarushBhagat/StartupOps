@@ -9,9 +9,8 @@ A modern, AI-powered platform designed for startup founders and teams to automat
 
 ---
 
-## 📺 WATCH DEMO VIDEO HERE 🎥
-🎬 **StartupOps - Full Project Walkthrough & Demo**  
-🔗 **Live Link:** [LIVE](https://startupops-omega.vercel.app/)
+## 🌐 Live Preview
+🔗 **Hosted Application:** [StartupOps Live](https://startupops-omega.vercel.app/)
 
 ---
 
