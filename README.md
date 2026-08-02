@@ -5,7 +5,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
 
-A modern, AI-powered platform designed for startup founders and teams to automate roadmap creation, manage tasks in real-time, and track project metrics with a premium, high-end user experience.
+A modern, AI-powered platform designed for startup founders and teams to automate roadmap creation, manage tasks in real-time, track project metrics, and streamline team onboarding with a premium, high-end user experience.
 
 ---
 
@@ -16,12 +16,13 @@ A modern, AI-powered platform designed for startup founders and teams to automat
 ---
 
 ## 🎯 Overview
-StartupOps is a comprehensive acceleration platform that streamlines startup operations. By leveraging the **Google Gemini AI API**, it automates the transition from ideation to execution, providing founders with personalized roadmaps and actionable tasks in seconds.
+StartupOps is a comprehensive acceleration platform that streamlines startup operations. By leveraging the **Google Gemini AI API**, it automates the transition from ideation to execution, providing founders with personalized roadmaps and actionable tasks in seconds. Our team management system makes scaling, inviting, and onboarding seamless.
 
 ### Why StartupOps?
 *   ✅ **AI-Driven Strategy** - Dynamic roadmap and task generation based on your unique startup context.
 *   ✅ **Premium Glassmorphism UI** - A high-end, responsive dashboard built with **Framer Motion** and **TailwindCSS**.
 *   ✅ **Real-Time Collaboration** - Powered by **Firebase Firestore**, ensuring all task updates are synchronized instantly.
+*   ✅ **Seamless Team Onboarding** - Robust email invitations and unique invite codes to quickly integrate new hires.
 *   ✅ **Actionable Insights** - Advanced analytics and investor-hub scoring to track your startup's readiness.
 
 ---
@@ -32,6 +33,12 @@ StartupOps is a comprehensive acceleration platform that streamlines startup ope
 *   **Smart Roadmap Generation**: Automatically creates a 12-week execution plan based on your startup industry and stage.
 *   **AI Task Expansion**: Give a simple prompt (e.g., "Build a landing page") and Gemini generates a detailed set of sub-tasks, requirements, and methods.
 *   **Investor Readiness Scoring**: Analyze your progress and get a real-time score for your pitch and project maturity.
+
+### 👥 Team & Employee Management
+*   **Dedicated Employee Portal**: Seamless onboarding experience for new team members with their own role-based dashboard.
+*   **Smart Invitations**: Founders can invite members directly via email (SMTP) or provide a secure unique "Invite Code" for association.
+*   **Custom Roles & Designations**: Input custom professional designations for new hires, tailoring roles to exact startup needs.
+*   **Team Leaderboards & Rewards**: Engage employees with a built-in reward system (supporting regional currency formats like ₹) and team leaderboards.
 
 ### ✅ Task Management (Kanban)
 *   **Dynamic Kanban Board**: Drag-and-drop style task management (To Do, In Progress, Review, Done).
@@ -44,7 +51,7 @@ StartupOps is a comprehensive acceleration platform that streamlines startup ope
 
 ### 🔒 Secure Authentication
 *   **Firebase Auth**: Secure login and signup with personalized startup onboarding.
-*   **Role-Based Access**: Specialized dashboards for Founders and Team Members.
+*   **Role-Based Access**: Specialized dashboards for Founders and Team Members, ensuring privacy and focused workflows.
 
 ---
 
@@ -55,7 +62,7 @@ graph TD
     A[Frontend - React + TS] <-->|Real-time Sync| B[Firebase Firestore / Auth]
     A <-->|REST API| C[Backend - Node.js + Express]
     C <-->|AI Requests| D[Google Gemini Pro API]
-    C <-->|Admin Logic| B
+    C <-->|Admin Logic & Email Invites| B
 ```
 
 ---
@@ -76,6 +83,7 @@ graph TD
 *   **Language**: TypeScript
 *   **AI Integration**: Google Gemini API (@google/genai)
 *   **Admin SDK**: Firebase Admin
+*   **Emailing**: Secure SMTP Configuration
 
 ---
 
