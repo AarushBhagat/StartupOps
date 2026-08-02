@@ -1,14 +1,21 @@
-# 🚀 StartupOps - AI-Powered Startup Management Platform
+<h1 align="center">🚀 StartupOps – AI-Powered Startup Management Platform</h1>
 
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+<p align="center">
+  <img src="https://img.shields.io/badge/PLATFORM-FULL%20STACK-0088cc?style=for-the-badge" alt="Platform" />
+  <img src="https://img.shields.io/badge/REACT-WEB-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React Web" />
+  <img src="https://img.shields.io/badge/NODE.JS-BACKEND-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js Backend" />
+  <img src="https://img.shields.io/badge/EXPRESS.JS-API-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express API" />
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/FIREBASE-CLOUD-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase Cloud" />
+  <img src="https://img.shields.io/badge/GEMINI-AI%20SERVICE-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
+  <img src="https://img.shields.io/badge/TAILWIND-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/TYPESCRIPT-LANGUAGE-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+</p>
 
-A modern, AI-powered platform designed for startup founders and teams to automate roadmap creation, manage tasks in real-time, track project metrics, and streamline team onboarding with a premium, high-end user experience.
+<h3 align="center">
+  A modern, AI-powered platform designed for startup founders and teams to automate roadmap creation, manage tasks in real-time, track project metrics, and streamline team onboarding with a premium, high-end user experience.
+</h3>
 
 ---
 
